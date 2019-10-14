@@ -1,0 +1,18 @@
+type Query {
+    info: String!
+    feed: [Food!]!
+    food(id: ID!): Food
+}
+
+type Mutation {
+    post(name: String!, quantity: Int!, inCart: Boolean!): Food!
+    updateFood(id: ID!, name: String!, quantity: Int!, inCart: Boolean!): Food
+    deleteFood(id: ID!): Food
+}
+
+type Food {
+    id: ID!
+    name: String!
+    quantity: Int!
+    inCart: Boolean!
+}
