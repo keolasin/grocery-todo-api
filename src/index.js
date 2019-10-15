@@ -1,40 +1,28 @@
 const { GraphQLServer } = require('graphql-yoga');
+const { prisma } = require('./generated/prisma-client');
 
-let dummy = [{ // dummy data
-    id: 'foodItem-0',
-    name: 'Apples',
-    quantity: 1,
-    inCart: false
-}]
+// resolvers
+const Query = require('./resolvers/Query');
+const Mutation = require('./resolvers/Mutation');
+const User = require('./resolvers/User');
+const Food = require('./resolvers/Food');
 
-// resolver functions for implementation
-let idCount = dummy.length; // dummy data, starting idCount from the length of the dummy data provided
 const resolvers = {
-    Query: {
-        info: () => {
-            return 'This is the API for the grocery-todo app';
-        },
-        feed: () => {
-            return dummy
-        },
-    },
-    Mutation: {
-        post: (parent, args) => {
-            const foodItem = {
-                id: `foodItem-${idCount++}`,
-                name: args.name,
-                quantity: args.quantity,
-                inCart: args.inCart
-            }
-            dummy.push(foodItem);
-            return foodItem;
-        }
-    },
+    Query,
+    Mutation,
+    User,
+    Food
 };
 
 const server = new GraphQLServer({
     typeDefs: './src/schema.graphql',
-    resolvers
+    resolvers,
+    context: request => {
+        return {
+            ...request,
+            prisma
+        }
+    },
 });
 
 server.start(() => {
