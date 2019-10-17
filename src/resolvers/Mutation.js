@@ -42,8 +42,26 @@ function post(parent, args, context, info){
     });
 }
 
+async function vote(parent, args, context, info){
+    const userId = getUserId(context);
+    const foodExists = await context.prisma.$exists.vote({
+        user: { id: userId },
+        food: { id: args.foodId },
+    });
+
+    if (foodExists) {
+        throw new Error(`Already voted for food: ${args.foodId}`);
+    }
+
+    return context.prisma.createVote({
+        user: { connect: { id: userId } },
+        food: { connect: { id: args.foodId } },
+    });
+}
+
 module.exports = {
     signup,
     post,
+    vote,
     login
 }

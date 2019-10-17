@@ -11,6 +11,10 @@ type AggregateUser {
   count: Int!
 }
 
+type AggregateVote {
+  count: Int!
+}
+
 type BatchPayload {
   count: Long!
 }
@@ -24,6 +28,7 @@ type Food {
   quantity: Int!
   inCart: Boolean!
   postedBy: User
+  votes(where: VoteWhereInput, orderBy: VoteOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Vote!]
 }
 
 type FoodConnection {
@@ -38,6 +43,7 @@ input FoodCreateInput {
   quantity: Int!
   inCart: Boolean!
   postedBy: UserCreateOneWithoutFoodsInput
+  votes: VoteCreateManyWithoutFoodInput
 }
 
 input FoodCreateManyWithoutPostedByInput {
@@ -45,11 +51,25 @@ input FoodCreateManyWithoutPostedByInput {
   connect: [FoodWhereUniqueInput!]
 }
 
+input FoodCreateOneWithoutVotesInput {
+  create: FoodCreateWithoutVotesInput
+  connect: FoodWhereUniqueInput
+}
+
 input FoodCreateWithoutPostedByInput {
   id: ID
   name: String!
   quantity: Int!
   inCart: Boolean!
+  votes: VoteCreateManyWithoutFoodInput
+}
+
+input FoodCreateWithoutVotesInput {
+  id: ID
+  name: String!
+  quantity: Int!
+  inCart: Boolean!
+  postedBy: UserCreateOneWithoutFoodsInput
 }
 
 type FoodEdge {
@@ -153,6 +173,7 @@ input FoodUpdateInput {
   quantity: Int
   inCart: Boolean
   postedBy: UserUpdateOneWithoutFoodsInput
+  votes: VoteUpdateManyWithoutFoodInput
 }
 
 input FoodUpdateManyDataInput {
@@ -184,15 +205,35 @@ input FoodUpdateManyWithWhereNestedInput {
   data: FoodUpdateManyDataInput!
 }
 
+input FoodUpdateOneRequiredWithoutVotesInput {
+  create: FoodCreateWithoutVotesInput
+  update: FoodUpdateWithoutVotesDataInput
+  upsert: FoodUpsertWithoutVotesInput
+  connect: FoodWhereUniqueInput
+}
+
 input FoodUpdateWithoutPostedByDataInput {
   name: String
   quantity: Int
   inCart: Boolean
+  votes: VoteUpdateManyWithoutFoodInput
+}
+
+input FoodUpdateWithoutVotesDataInput {
+  name: String
+  quantity: Int
+  inCart: Boolean
+  postedBy: UserUpdateOneWithoutFoodsInput
 }
 
 input FoodUpdateWithWhereUniqueWithoutPostedByInput {
   where: FoodWhereUniqueInput!
   data: FoodUpdateWithoutPostedByDataInput!
+}
+
+input FoodUpsertWithoutVotesInput {
+  update: FoodUpdateWithoutVotesDataInput!
+  create: FoodCreateWithoutVotesInput!
 }
 
 input FoodUpsertWithWhereUniqueWithoutPostedByInput {
@@ -249,6 +290,9 @@ input FoodWhereInput {
   inCart: Boolean
   inCart_not: Boolean
   postedBy: UserWhereInput
+  votes_every: VoteWhereInput
+  votes_some: VoteWhereInput
+  votes_none: VoteWhereInput
   AND: [FoodWhereInput!]
   OR: [FoodWhereInput!]
   NOT: [FoodWhereInput!]
@@ -273,6 +317,11 @@ type Mutation {
   upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
   deleteUser(where: UserWhereUniqueInput!): User
   deleteManyUsers(where: UserWhereInput): BatchPayload!
+  createVote(data: VoteCreateInput!): Vote!
+  updateVote(data: VoteUpdateInput!, where: VoteWhereUniqueInput!): Vote
+  upsertVote(where: VoteWhereUniqueInput!, create: VoteCreateInput!, update: VoteUpdateInput!): Vote!
+  deleteVote(where: VoteWhereUniqueInput!): Vote
+  deleteManyVotes(where: VoteWhereInput): BatchPayload!
 }
 
 enum MutationType {
@@ -299,12 +348,16 @@ type Query {
   user(where: UserWhereUniqueInput!): User
   users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
   usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
+  vote(where: VoteWhereUniqueInput!): Vote
+  votes(where: VoteWhereInput, orderBy: VoteOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Vote]!
+  votesConnection(where: VoteWhereInput, orderBy: VoteOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): VoteConnection!
   node(id: ID!): Node
 }
 
 type Subscription {
   food(where: FoodSubscriptionWhereInput): FoodSubscriptionPayload
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
+  vote(where: VoteSubscriptionWhereInput): VoteSubscriptionPayload
 }
 
 type User {
@@ -313,6 +366,7 @@ type User {
   email: String!
   password: String!
   foods(where: FoodWhereInput, orderBy: FoodOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Food!]
+  votes(where: VoteWhereInput, orderBy: VoteOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Vote!]
 }
 
 type UserConnection {
@@ -327,10 +381,16 @@ input UserCreateInput {
   email: String!
   password: String!
   foods: FoodCreateManyWithoutPostedByInput
+  votes: VoteCreateManyWithoutUserInput
 }
 
 input UserCreateOneWithoutFoodsInput {
   create: UserCreateWithoutFoodsInput
+  connect: UserWhereUniqueInput
+}
+
+input UserCreateOneWithoutVotesInput {
+  create: UserCreateWithoutVotesInput
   connect: UserWhereUniqueInput
 }
 
@@ -339,6 +399,15 @@ input UserCreateWithoutFoodsInput {
   name: String!
   email: String!
   password: String!
+  votes: VoteCreateManyWithoutUserInput
+}
+
+input UserCreateWithoutVotesInput {
+  id: ID
+  name: String!
+  email: String!
+  password: String!
+  foods: FoodCreateManyWithoutPostedByInput
 }
 
 type UserEdge {
@@ -387,12 +456,20 @@ input UserUpdateInput {
   email: String
   password: String
   foods: FoodUpdateManyWithoutPostedByInput
+  votes: VoteUpdateManyWithoutUserInput
 }
 
 input UserUpdateManyMutationInput {
   name: String
   email: String
   password: String
+}
+
+input UserUpdateOneRequiredWithoutVotesInput {
+  create: UserCreateWithoutVotesInput
+  update: UserUpdateWithoutVotesDataInput
+  upsert: UserUpsertWithoutVotesInput
+  connect: UserWhereUniqueInput
 }
 
 input UserUpdateOneWithoutFoodsInput {
@@ -408,11 +485,24 @@ input UserUpdateWithoutFoodsDataInput {
   name: String
   email: String
   password: String
+  votes: VoteUpdateManyWithoutUserInput
+}
+
+input UserUpdateWithoutVotesDataInput {
+  name: String
+  email: String
+  password: String
+  foods: FoodUpdateManyWithoutPostedByInput
 }
 
 input UserUpsertWithoutFoodsInput {
   update: UserUpdateWithoutFoodsDataInput!
   create: UserCreateWithoutFoodsInput!
+}
+
+input UserUpsertWithoutVotesInput {
+  update: UserUpdateWithoutVotesDataInput!
+  create: UserCreateWithoutVotesInput!
 }
 
 input UserWhereInput {
@@ -475,6 +565,9 @@ input UserWhereInput {
   foods_every: FoodWhereInput
   foods_some: FoodWhereInput
   foods_none: FoodWhereInput
+  votes_every: VoteWhereInput
+  votes_some: VoteWhereInput
+  votes_none: VoteWhereInput
   AND: [UserWhereInput!]
   OR: [UserWhereInput!]
   NOT: [UserWhereInput!]
@@ -483,6 +576,179 @@ input UserWhereInput {
 input UserWhereUniqueInput {
   id: ID
   email: String
+}
+
+type Vote {
+  id: ID!
+  food: Food!
+  user: User!
+}
+
+type VoteConnection {
+  pageInfo: PageInfo!
+  edges: [VoteEdge]!
+  aggregate: AggregateVote!
+}
+
+input VoteCreateInput {
+  id: ID
+  food: FoodCreateOneWithoutVotesInput!
+  user: UserCreateOneWithoutVotesInput!
+}
+
+input VoteCreateManyWithoutFoodInput {
+  create: [VoteCreateWithoutFoodInput!]
+  connect: [VoteWhereUniqueInput!]
+}
+
+input VoteCreateManyWithoutUserInput {
+  create: [VoteCreateWithoutUserInput!]
+  connect: [VoteWhereUniqueInput!]
+}
+
+input VoteCreateWithoutFoodInput {
+  id: ID
+  user: UserCreateOneWithoutVotesInput!
+}
+
+input VoteCreateWithoutUserInput {
+  id: ID
+  food: FoodCreateOneWithoutVotesInput!
+}
+
+type VoteEdge {
+  node: Vote!
+  cursor: String!
+}
+
+enum VoteOrderByInput {
+  id_ASC
+  id_DESC
+}
+
+type VotePreviousValues {
+  id: ID!
+}
+
+input VoteScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  AND: [VoteScalarWhereInput!]
+  OR: [VoteScalarWhereInput!]
+  NOT: [VoteScalarWhereInput!]
+}
+
+type VoteSubscriptionPayload {
+  mutation: MutationType!
+  node: Vote
+  updatedFields: [String!]
+  previousValues: VotePreviousValues
+}
+
+input VoteSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: VoteWhereInput
+  AND: [VoteSubscriptionWhereInput!]
+  OR: [VoteSubscriptionWhereInput!]
+  NOT: [VoteSubscriptionWhereInput!]
+}
+
+input VoteUpdateInput {
+  food: FoodUpdateOneRequiredWithoutVotesInput
+  user: UserUpdateOneRequiredWithoutVotesInput
+}
+
+input VoteUpdateManyWithoutFoodInput {
+  create: [VoteCreateWithoutFoodInput!]
+  delete: [VoteWhereUniqueInput!]
+  connect: [VoteWhereUniqueInput!]
+  set: [VoteWhereUniqueInput!]
+  disconnect: [VoteWhereUniqueInput!]
+  update: [VoteUpdateWithWhereUniqueWithoutFoodInput!]
+  upsert: [VoteUpsertWithWhereUniqueWithoutFoodInput!]
+  deleteMany: [VoteScalarWhereInput!]
+}
+
+input VoteUpdateManyWithoutUserInput {
+  create: [VoteCreateWithoutUserInput!]
+  delete: [VoteWhereUniqueInput!]
+  connect: [VoteWhereUniqueInput!]
+  set: [VoteWhereUniqueInput!]
+  disconnect: [VoteWhereUniqueInput!]
+  update: [VoteUpdateWithWhereUniqueWithoutUserInput!]
+  upsert: [VoteUpsertWithWhereUniqueWithoutUserInput!]
+  deleteMany: [VoteScalarWhereInput!]
+}
+
+input VoteUpdateWithoutFoodDataInput {
+  user: UserUpdateOneRequiredWithoutVotesInput
+}
+
+input VoteUpdateWithoutUserDataInput {
+  food: FoodUpdateOneRequiredWithoutVotesInput
+}
+
+input VoteUpdateWithWhereUniqueWithoutFoodInput {
+  where: VoteWhereUniqueInput!
+  data: VoteUpdateWithoutFoodDataInput!
+}
+
+input VoteUpdateWithWhereUniqueWithoutUserInput {
+  where: VoteWhereUniqueInput!
+  data: VoteUpdateWithoutUserDataInput!
+}
+
+input VoteUpsertWithWhereUniqueWithoutFoodInput {
+  where: VoteWhereUniqueInput!
+  update: VoteUpdateWithoutFoodDataInput!
+  create: VoteCreateWithoutFoodInput!
+}
+
+input VoteUpsertWithWhereUniqueWithoutUserInput {
+  where: VoteWhereUniqueInput!
+  update: VoteUpdateWithoutUserDataInput!
+  create: VoteCreateWithoutUserInput!
+}
+
+input VoteWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  food: FoodWhereInput
+  user: UserWhereInput
+  AND: [VoteWhereInput!]
+  OR: [VoteWhereInput!]
+  NOT: [VoteWhereInput!]
+}
+
+input VoteWhereUniqueInput {
+  id: ID
 }
 `
       }

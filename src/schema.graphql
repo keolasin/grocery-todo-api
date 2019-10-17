@@ -1,6 +1,6 @@
 type Query {
     info: String!
-    feed: [Food!]!
+    feed(filter: String, skip: Int, first: Int): [Food!]!
     food(id: ID!): Food
 }
 
@@ -11,6 +11,7 @@ type Mutation {
 
     signup(email: String!, password: String!, name: String!): AuthPayload
     login(email: String!, password: String!): AuthPayload
+    vote(foodId: ID!): Vote
 }
 
 type Food {
@@ -19,6 +20,7 @@ type Food {
     quantity: Int!
     inCart: Boolean!
     postedBy: User
+    votes: [Vote!]!
 }
 
 type AuthPayload {
@@ -31,4 +33,15 @@ type User {
     name: String!
     email: String!
     foods: [Food!]!
+}
+
+type Subscription {
+    newFood: Food
+    newVote: Vote
+}
+
+type Vote {
+    id: ID!
+    food: Food!
+    user: User!
 }
