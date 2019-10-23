@@ -17,6 +17,7 @@ var models = [
     embedded: false
   }
 ];
+
 exports.Prisma = prisma_lib_1.makePrismaClientClass({
   typeDefs,
   models,
