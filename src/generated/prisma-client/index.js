@@ -15,6 +15,10 @@ var models = [
   {
     name: "Vote",
     embedded: false
+  },
+  {
+    name: "Group",
+    embedded: false
   }
 ];
 

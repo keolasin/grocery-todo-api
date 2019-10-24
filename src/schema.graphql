@@ -2,6 +2,7 @@ type Query {
     info: String!
     feed(filter: String, skip: Int, first: Int): [Food!]!
     food(id: ID!): Food
+    groupList(): [Group!]!
 }
 
 type Mutation {
@@ -11,7 +12,12 @@ type Mutation {
 
     signup(email: String!, password: String!, name: String!): AuthPayload
     login(email: String!, password: String!): AuthPayload
+
     vote(foodId: ID!): Vote
+
+    createGroup(name: String!, isPrivate: Boolean!): Group!
+    updateGroup(id: ID!, name: String!, isPrivate: Boolean!): Group
+    deleteGroup(id: ID!): Group
 }
 
 type Food {
@@ -33,15 +39,25 @@ type User {
     name: String!
     email: String!
     foods: [Food!]!
+    groups: [Group!]!
 }
 
 type Subscription {
     newFood: Food
     newVote: Vote
+    newGroup: Group
 }
 
 type Vote {
     id: ID!
     food: Food!
     user: User!
+}
+
+type Group {
+    id: ID!
+    name: String!
+    users: [User!]!
+    createdBy: User!
+    isPrivate: Boolean!
 }

@@ -5,14 +5,14 @@ async function feed(parent, args, context, info) {
           { quantity_contains: args.filter },
           { inCart_contains: args.filter },
         ],
-      } : {}
+      } : {};
     
-      const foods = await context.prisma.foods({
+    const foods = await context.prisma.foods({
         where,
         skip: args.skip,
         first: args.first
-      })
-      return foods
+    });
+    return foods;
 }
 
 module.exports = {
