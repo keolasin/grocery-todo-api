@@ -6,6 +6,7 @@ type Food {
     inCart: Boolean!
     postedBy: User
     votes: [Vote!]!
+    group: Group
 }
 
 type User {
@@ -15,10 +16,22 @@ type User {
     password: String!
     foods: [Food!]!
     votes: [Vote!]!
+    createdGroups: [Group!] @relation(link: TABLE, name: "CreatedGroups")
+    memberOfGroups: [Group!] @relation(link: TABLE, name: "MemberOfGroups")
 }
 
 type Vote {
     id: ID! @id
     food: Food!
     user: User!
+}
+
+type Group {
+    id: ID! @id
+    name: String!
+    createdAt: DateTime! @createdAt
+    createdBy: User! @relation(name: "CreatedGroups")
+    members: [User!] @relation(name: "MemberOfGroups")
+    isPrivate: Boolean!
+    foods: [Food!]
 }

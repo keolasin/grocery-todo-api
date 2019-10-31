@@ -1,4 +1,4 @@
-async function feed(parent, args, context, info) {
+async function feed(parent, args, context, info){
     const where = args.filter ? {
         OR: [
           { name_contains: args.filter },
@@ -15,6 +15,22 @@ async function feed(parent, args, context, info) {
     return foods;
 }
 
+async function groupList(parent, args, context, info){
+    const where = args.filter ? {
+        OR: [
+            { name_contains: args.filter },
+            { isPrivate_contains: args.filter }
+        ],
+    } : {};
+    const groups = await context.prisma.groups({
+        where,
+        skip: args.skip,
+        first: args.first
+    });
+    return groups;
+}
+
 module.exports = {
-    feed
+    feed,
+    groupList
 };

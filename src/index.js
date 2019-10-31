@@ -6,9 +6,10 @@ const Query = require('./resolvers/Query');
 const Mutation = require('./resolvers/Mutation');
 const Subscription = require('./resolvers/Subscription');
 const User = require('./resolvers/User');
+const Group = require('./resolvers/Group');
 const Food = require('./resolvers/Food');
 const Vote = require('./resolvers/Vote');
-const Group = require('./resolvers/Group');
+
 
 const resolvers = {
     Query,

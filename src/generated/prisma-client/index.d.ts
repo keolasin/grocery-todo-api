@@ -17,6 +17,7 @@ export type Maybe<T> = T | undefined | null;
 
 export interface Exists {
   food: (where?: FoodWhereInput) => Promise<boolean>;
+  group: (where?: GroupWhereInput) => Promise<boolean>;
   user: (where?: UserWhereInput) => Promise<boolean>;
   vote: (where?: VoteWhereInput) => Promise<boolean>;
 }
@@ -59,6 +60,25 @@ export interface Prisma {
     first?: Int;
     last?: Int;
   }) => FoodConnectionPromise;
+  group: (where: GroupWhereUniqueInput) => GroupNullablePromise;
+  groups: (args?: {
+    where?: GroupWhereInput;
+    orderBy?: GroupOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => FragmentableArray<Group>;
+  groupsConnection: (args?: {
+    where?: GroupWhereInput;
+    orderBy?: GroupOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => GroupConnectionPromise;
   user: (where: UserWhereUniqueInput) => UserNullablePromise;
   users: (args?: {
     where?: UserWhereInput;
@@ -119,6 +139,22 @@ export interface Prisma {
   }) => FoodPromise;
   deleteFood: (where: FoodWhereUniqueInput) => FoodPromise;
   deleteManyFoods: (where?: FoodWhereInput) => BatchPayloadPromise;
+  createGroup: (data: GroupCreateInput) => GroupPromise;
+  updateGroup: (args: {
+    data: GroupUpdateInput;
+    where: GroupWhereUniqueInput;
+  }) => GroupPromise;
+  updateManyGroups: (args: {
+    data: GroupUpdateManyMutationInput;
+    where?: GroupWhereInput;
+  }) => BatchPayloadPromise;
+  upsertGroup: (args: {
+    where: GroupWhereUniqueInput;
+    create: GroupCreateInput;
+    update: GroupUpdateInput;
+  }) => GroupPromise;
+  deleteGroup: (where: GroupWhereUniqueInput) => GroupPromise;
+  deleteManyGroups: (where?: GroupWhereInput) => BatchPayloadPromise;
   createUser: (data: UserCreateInput) => UserPromise;
   updateUser: (args: {
     data: UserUpdateInput;
@@ -159,6 +195,9 @@ export interface Subscription {
   food: (
     where?: FoodSubscriptionWhereInput
   ) => FoodSubscriptionPayloadSubscription;
+  group: (
+    where?: GroupSubscriptionWhereInput
+  ) => GroupSubscriptionPayloadSubscription;
   user: (
     where?: UserSubscriptionWhereInput
   ) => UserSubscriptionPayloadSubscription;
@@ -189,6 +228,16 @@ export type FoodOrderByInput =
 
 export type VoteOrderByInput = "id_ASC" | "id_DESC";
 
+export type GroupOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "name_ASC"
+  | "name_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "isPrivate_ASC"
+  | "isPrivate_DESC";
+
 export type UserOrderByInput =
   | "id_ASC"
   | "id_DESC"
@@ -201,6 +250,111 @@ export type UserOrderByInput =
 
 export type MutationType = "CREATED" | "UPDATED" | "DELETED";
 
+export interface GroupUpdateWithoutFoodsDataInput {
+  name?: Maybe<String>;
+  createdBy?: Maybe<UserUpdateOneRequiredWithoutCreatedGroupsInput>;
+  members?: Maybe<UserUpdateManyWithoutMemberOfGroupsInput>;
+  isPrivate?: Maybe<Boolean>;
+}
+
+export type FoodWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+}>;
+
+export interface FoodCreateWithoutGroupInput {
+  id?: Maybe<ID_Input>;
+  name: String;
+  quantity: Int;
+  inCart: Boolean;
+  postedBy?: Maybe<UserCreateOneWithoutFoodsInput>;
+  votes?: Maybe<VoteCreateManyWithoutFoodInput>;
+}
+
+export interface VoteUpsertWithWhereUniqueWithoutFoodInput {
+  where: VoteWhereUniqueInput;
+  update: VoteUpdateWithoutFoodDataInput;
+  create: VoteCreateWithoutFoodInput;
+}
+
+export interface GroupCreateManyWithoutMembersInput {
+  create?: Maybe<
+    GroupCreateWithoutMembersInput[] | GroupCreateWithoutMembersInput
+  >;
+  connect?: Maybe<GroupWhereUniqueInput[] | GroupWhereUniqueInput>;
+}
+
+export interface FoodUpdateManyWithoutPostedByInput {
+  create?: Maybe<
+    FoodCreateWithoutPostedByInput[] | FoodCreateWithoutPostedByInput
+  >;
+  delete?: Maybe<FoodWhereUniqueInput[] | FoodWhereUniqueInput>;
+  connect?: Maybe<FoodWhereUniqueInput[] | FoodWhereUniqueInput>;
+  set?: Maybe<FoodWhereUniqueInput[] | FoodWhereUniqueInput>;
+  disconnect?: Maybe<FoodWhereUniqueInput[] | FoodWhereUniqueInput>;
+  update?: Maybe<
+    | FoodUpdateWithWhereUniqueWithoutPostedByInput[]
+    | FoodUpdateWithWhereUniqueWithoutPostedByInput
+  >;
+  upsert?: Maybe<
+    | FoodUpsertWithWhereUniqueWithoutPostedByInput[]
+    | FoodUpsertWithWhereUniqueWithoutPostedByInput
+  >;
+  deleteMany?: Maybe<FoodScalarWhereInput[] | FoodScalarWhereInput>;
+  updateMany?: Maybe<
+    FoodUpdateManyWithWhereNestedInput[] | FoodUpdateManyWithWhereNestedInput
+  >;
+}
+
+export interface GroupCreateWithoutMembersInput {
+  id?: Maybe<ID_Input>;
+  name: String;
+  createdBy: UserCreateOneWithoutCreatedGroupsInput;
+  isPrivate: Boolean;
+  foods?: Maybe<FoodCreateManyWithoutGroupInput>;
+}
+
+export interface VoteWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  food?: Maybe<FoodWhereInput>;
+  user?: Maybe<UserWhereInput>;
+  AND?: Maybe<VoteWhereInput[] | VoteWhereInput>;
+  OR?: Maybe<VoteWhereInput[] | VoteWhereInput>;
+  NOT?: Maybe<VoteWhereInput[] | VoteWhereInput>;
+}
+
+export interface FoodUpdateInput {
+  name?: Maybe<String>;
+  quantity?: Maybe<Int>;
+  inCart?: Maybe<Boolean>;
+  postedBy?: Maybe<UserUpdateOneWithoutFoodsInput>;
+  votes?: Maybe<VoteUpdateManyWithoutFoodInput>;
+  group?: Maybe<GroupUpdateOneWithoutFoodsInput>;
+}
+
+export interface VoteSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<VoteWhereInput>;
+  AND?: Maybe<VoteSubscriptionWhereInput[] | VoteSubscriptionWhereInput>;
+  OR?: Maybe<VoteSubscriptionWhereInput[] | VoteSubscriptionWhereInput>;
+  NOT?: Maybe<VoteSubscriptionWhereInput[] | VoteSubscriptionWhereInput>;
+}
+
 export interface UserUpdateOneWithoutFoodsInput {
   create?: Maybe<UserCreateWithoutFoodsInput>;
   update?: Maybe<UserUpdateWithoutFoodsDataInput>;
@@ -210,18 +364,899 @@ export interface UserUpdateOneWithoutFoodsInput {
   connect?: Maybe<UserWhereUniqueInput>;
 }
 
-export type FoodWhereUniqueInput = AtLeastOne<{
+export interface GroupSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<GroupWhereInput>;
+  AND?: Maybe<GroupSubscriptionWhereInput[] | GroupSubscriptionWhereInput>;
+  OR?: Maybe<GroupSubscriptionWhereInput[] | GroupSubscriptionWhereInput>;
+  NOT?: Maybe<GroupSubscriptionWhereInput[] | GroupSubscriptionWhereInput>;
+}
+
+export interface UserUpdateWithoutFoodsDataInput {
+  name?: Maybe<String>;
+  email?: Maybe<String>;
+  password?: Maybe<String>;
+  votes?: Maybe<VoteUpdateManyWithoutUserInput>;
+  createdGroups?: Maybe<GroupUpdateManyWithoutCreatedByInput>;
+  memberOfGroups?: Maybe<GroupUpdateManyWithoutMembersInput>;
+}
+
+export interface VoteUpdateInput {
+  food?: Maybe<FoodUpdateOneRequiredWithoutVotesInput>;
+  user?: Maybe<UserUpdateOneRequiredWithoutVotesInput>;
+}
+
+export interface VoteUpdateManyWithoutUserInput {
+  create?: Maybe<VoteCreateWithoutUserInput[] | VoteCreateWithoutUserInput>;
+  delete?: Maybe<VoteWhereUniqueInput[] | VoteWhereUniqueInput>;
+  connect?: Maybe<VoteWhereUniqueInput[] | VoteWhereUniqueInput>;
+  set?: Maybe<VoteWhereUniqueInput[] | VoteWhereUniqueInput>;
+  disconnect?: Maybe<VoteWhereUniqueInput[] | VoteWhereUniqueInput>;
+  update?: Maybe<
+    | VoteUpdateWithWhereUniqueWithoutUserInput[]
+    | VoteUpdateWithWhereUniqueWithoutUserInput
+  >;
+  upsert?: Maybe<
+    | VoteUpsertWithWhereUniqueWithoutUserInput[]
+    | VoteUpsertWithWhereUniqueWithoutUserInput
+  >;
+  deleteMany?: Maybe<VoteScalarWhereInput[] | VoteScalarWhereInput>;
+}
+
+export interface UserUpdateManyMutationInput {
+  name?: Maybe<String>;
+  email?: Maybe<String>;
+  password?: Maybe<String>;
+}
+
+export interface VoteUpdateWithWhereUniqueWithoutUserInput {
+  where: VoteWhereUniqueInput;
+  data: VoteUpdateWithoutUserDataInput;
+}
+
+export interface UserCreateInput {
+  id?: Maybe<ID_Input>;
+  name: String;
+  email: String;
+  password: String;
+  foods?: Maybe<FoodCreateManyWithoutPostedByInput>;
+  votes?: Maybe<VoteCreateManyWithoutUserInput>;
+  createdGroups?: Maybe<GroupCreateManyWithoutCreatedByInput>;
+  memberOfGroups?: Maybe<GroupCreateManyWithoutMembersInput>;
+}
+
+export interface VoteUpdateWithoutUserDataInput {
+  food?: Maybe<FoodUpdateOneRequiredWithoutVotesInput>;
+}
+
+export type GroupWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
 }>;
+
+export interface FoodUpdateOneRequiredWithoutVotesInput {
+  create?: Maybe<FoodCreateWithoutVotesInput>;
+  update?: Maybe<FoodUpdateWithoutVotesDataInput>;
+  upsert?: Maybe<FoodUpsertWithoutVotesInput>;
+  connect?: Maybe<FoodWhereUniqueInput>;
+}
+
+export interface GroupCreateInput {
+  id?: Maybe<ID_Input>;
+  name: String;
+  createdBy: UserCreateOneWithoutCreatedGroupsInput;
+  members?: Maybe<UserCreateManyWithoutMemberOfGroupsInput>;
+  isPrivate: Boolean;
+  foods?: Maybe<FoodCreateManyWithoutGroupInput>;
+}
+
+export interface FoodUpdateWithoutVotesDataInput {
+  name?: Maybe<String>;
+  quantity?: Maybe<Int>;
+  inCart?: Maybe<Boolean>;
+  postedBy?: Maybe<UserUpdateOneWithoutFoodsInput>;
+  group?: Maybe<GroupUpdateOneWithoutFoodsInput>;
+}
+
+export type UserWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+  email?: Maybe<String>;
+}>;
+
+export interface GroupUpdateOneWithoutFoodsInput {
+  create?: Maybe<GroupCreateWithoutFoodsInput>;
+  update?: Maybe<GroupUpdateWithoutFoodsDataInput>;
+  upsert?: Maybe<GroupUpsertWithoutFoodsInput>;
+  delete?: Maybe<Boolean>;
+  disconnect?: Maybe<Boolean>;
+  connect?: Maybe<GroupWhereUniqueInput>;
+}
+
+export interface VoteUpsertWithWhereUniqueWithoutUserInput {
+  where: VoteWhereUniqueInput;
+  update: VoteUpdateWithoutUserDataInput;
+  create: VoteCreateWithoutUserInput;
+}
+
+export interface VoteScalarWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  AND?: Maybe<VoteScalarWhereInput[] | VoteScalarWhereInput>;
+  OR?: Maybe<VoteScalarWhereInput[] | VoteScalarWhereInput>;
+  NOT?: Maybe<VoteScalarWhereInput[] | VoteScalarWhereInput>;
+}
+
+export type VoteWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+}>;
+
+export interface UserUpdateOneRequiredWithoutCreatedGroupsInput {
+  create?: Maybe<UserCreateWithoutCreatedGroupsInput>;
+  update?: Maybe<UserUpdateWithoutCreatedGroupsDataInput>;
+  upsert?: Maybe<UserUpsertWithoutCreatedGroupsInput>;
+  connect?: Maybe<UserWhereUniqueInput>;
+}
+
+export interface UserUpsertWithoutCreatedGroupsInput {
+  update: UserUpdateWithoutCreatedGroupsDataInput;
+  create: UserCreateWithoutCreatedGroupsInput;
+}
+
+export interface UserUpdateWithoutCreatedGroupsDataInput {
+  name?: Maybe<String>;
+  email?: Maybe<String>;
+  password?: Maybe<String>;
+  foods?: Maybe<FoodUpdateManyWithoutPostedByInput>;
+  votes?: Maybe<VoteUpdateManyWithoutUserInput>;
+  memberOfGroups?: Maybe<GroupUpdateManyWithoutMembersInput>;
+}
+
+export interface UserCreateOneWithoutFoodsInput {
+  create?: Maybe<UserCreateWithoutFoodsInput>;
+  connect?: Maybe<UserWhereUniqueInput>;
+}
+
+export interface FoodWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  name?: Maybe<String>;
+  name_not?: Maybe<String>;
+  name_in?: Maybe<String[] | String>;
+  name_not_in?: Maybe<String[] | String>;
+  name_lt?: Maybe<String>;
+  name_lte?: Maybe<String>;
+  name_gt?: Maybe<String>;
+  name_gte?: Maybe<String>;
+  name_contains?: Maybe<String>;
+  name_not_contains?: Maybe<String>;
+  name_starts_with?: Maybe<String>;
+  name_not_starts_with?: Maybe<String>;
+  name_ends_with?: Maybe<String>;
+  name_not_ends_with?: Maybe<String>;
+  quantity?: Maybe<Int>;
+  quantity_not?: Maybe<Int>;
+  quantity_in?: Maybe<Int[] | Int>;
+  quantity_not_in?: Maybe<Int[] | Int>;
+  quantity_lt?: Maybe<Int>;
+  quantity_lte?: Maybe<Int>;
+  quantity_gt?: Maybe<Int>;
+  quantity_gte?: Maybe<Int>;
+  inCart?: Maybe<Boolean>;
+  inCart_not?: Maybe<Boolean>;
+  postedBy?: Maybe<UserWhereInput>;
+  votes_every?: Maybe<VoteWhereInput>;
+  votes_some?: Maybe<VoteWhereInput>;
+  votes_none?: Maybe<VoteWhereInput>;
+  group?: Maybe<GroupWhereInput>;
+  AND?: Maybe<FoodWhereInput[] | FoodWhereInput>;
+  OR?: Maybe<FoodWhereInput[] | FoodWhereInput>;
+  NOT?: Maybe<FoodWhereInput[] | FoodWhereInput>;
+}
+
+export interface VoteCreateManyWithoutUserInput {
+  create?: Maybe<VoteCreateWithoutUserInput[] | VoteCreateWithoutUserInput>;
+  connect?: Maybe<VoteWhereUniqueInput[] | VoteWhereUniqueInput>;
+}
+
+export interface FoodUpdateWithWhereUniqueWithoutPostedByInput {
+  where: FoodWhereUniqueInput;
+  data: FoodUpdateWithoutPostedByDataInput;
+}
 
 export interface FoodCreateOneWithoutVotesInput {
   create?: Maybe<FoodCreateWithoutVotesInput>;
   connect?: Maybe<FoodWhereUniqueInput>;
 }
 
-export interface FoodUpdateWithWhereUniqueWithoutPostedByInput {
+export interface FoodUpdateWithoutPostedByDataInput {
+  name?: Maybe<String>;
+  quantity?: Maybe<Int>;
+  inCart?: Maybe<Boolean>;
+  votes?: Maybe<VoteUpdateManyWithoutFoodInput>;
+  group?: Maybe<GroupUpdateOneWithoutFoodsInput>;
+}
+
+export interface GroupCreateOneWithoutFoodsInput {
+  create?: Maybe<GroupCreateWithoutFoodsInput>;
+  connect?: Maybe<GroupWhereUniqueInput>;
+}
+
+export interface VoteUpdateManyWithoutFoodInput {
+  create?: Maybe<VoteCreateWithoutFoodInput[] | VoteCreateWithoutFoodInput>;
+  delete?: Maybe<VoteWhereUniqueInput[] | VoteWhereUniqueInput>;
+  connect?: Maybe<VoteWhereUniqueInput[] | VoteWhereUniqueInput>;
+  set?: Maybe<VoteWhereUniqueInput[] | VoteWhereUniqueInput>;
+  disconnect?: Maybe<VoteWhereUniqueInput[] | VoteWhereUniqueInput>;
+  update?: Maybe<
+    | VoteUpdateWithWhereUniqueWithoutFoodInput[]
+    | VoteUpdateWithWhereUniqueWithoutFoodInput
+  >;
+  upsert?: Maybe<
+    | VoteUpsertWithWhereUniqueWithoutFoodInput[]
+    | VoteUpsertWithWhereUniqueWithoutFoodInput
+  >;
+  deleteMany?: Maybe<VoteScalarWhereInput[] | VoteScalarWhereInput>;
+}
+
+export interface UserCreateOneWithoutCreatedGroupsInput {
+  create?: Maybe<UserCreateWithoutCreatedGroupsInput>;
+  connect?: Maybe<UserWhereUniqueInput>;
+}
+
+export interface VoteUpdateWithWhereUniqueWithoutFoodInput {
+  where: VoteWhereUniqueInput;
+  data: VoteUpdateWithoutFoodDataInput;
+}
+
+export interface FoodCreateManyWithoutPostedByInput {
+  create?: Maybe<
+    FoodCreateWithoutPostedByInput[] | FoodCreateWithoutPostedByInput
+  >;
+  connect?: Maybe<FoodWhereUniqueInput[] | FoodWhereUniqueInput>;
+}
+
+export interface VoteUpdateWithoutFoodDataInput {
+  user?: Maybe<UserUpdateOneRequiredWithoutVotesInput>;
+}
+
+export interface VoteCreateManyWithoutFoodInput {
+  create?: Maybe<VoteCreateWithoutFoodInput[] | VoteCreateWithoutFoodInput>;
+  connect?: Maybe<VoteWhereUniqueInput[] | VoteWhereUniqueInput>;
+}
+
+export interface UserUpdateOneRequiredWithoutVotesInput {
+  create?: Maybe<UserCreateWithoutVotesInput>;
+  update?: Maybe<UserUpdateWithoutVotesDataInput>;
+  upsert?: Maybe<UserUpsertWithoutVotesInput>;
+  connect?: Maybe<UserWhereUniqueInput>;
+}
+
+export interface UserCreateOneWithoutVotesInput {
+  create?: Maybe<UserCreateWithoutVotesInput>;
+  connect?: Maybe<UserWhereUniqueInput>;
+}
+
+export interface UserUpdateWithoutVotesDataInput {
+  name?: Maybe<String>;
+  email?: Maybe<String>;
+  password?: Maybe<String>;
+  foods?: Maybe<FoodUpdateManyWithoutPostedByInput>;
+  createdGroups?: Maybe<GroupUpdateManyWithoutCreatedByInput>;
+  memberOfGroups?: Maybe<GroupUpdateManyWithoutMembersInput>;
+}
+
+export interface GroupCreateManyWithoutCreatedByInput {
+  create?: Maybe<
+    GroupCreateWithoutCreatedByInput[] | GroupCreateWithoutCreatedByInput
+  >;
+  connect?: Maybe<GroupWhereUniqueInput[] | GroupWhereUniqueInput>;
+}
+
+export interface GroupUpdateManyWithoutCreatedByInput {
+  create?: Maybe<
+    GroupCreateWithoutCreatedByInput[] | GroupCreateWithoutCreatedByInput
+  >;
+  delete?: Maybe<GroupWhereUniqueInput[] | GroupWhereUniqueInput>;
+  connect?: Maybe<GroupWhereUniqueInput[] | GroupWhereUniqueInput>;
+  set?: Maybe<GroupWhereUniqueInput[] | GroupWhereUniqueInput>;
+  disconnect?: Maybe<GroupWhereUniqueInput[] | GroupWhereUniqueInput>;
+  update?: Maybe<
+    | GroupUpdateWithWhereUniqueWithoutCreatedByInput[]
+    | GroupUpdateWithWhereUniqueWithoutCreatedByInput
+  >;
+  upsert?: Maybe<
+    | GroupUpsertWithWhereUniqueWithoutCreatedByInput[]
+    | GroupUpsertWithWhereUniqueWithoutCreatedByInput
+  >;
+  deleteMany?: Maybe<GroupScalarWhereInput[] | GroupScalarWhereInput>;
+  updateMany?: Maybe<
+    GroupUpdateManyWithWhereNestedInput[] | GroupUpdateManyWithWhereNestedInput
+  >;
+}
+
+export interface UserCreateManyWithoutMemberOfGroupsInput {
+  create?: Maybe<
+    | UserCreateWithoutMemberOfGroupsInput[]
+    | UserCreateWithoutMemberOfGroupsInput
+  >;
+  connect?: Maybe<UserWhereUniqueInput[] | UserWhereUniqueInput>;
+}
+
+export interface GroupUpdateWithWhereUniqueWithoutCreatedByInput {
+  where: GroupWhereUniqueInput;
+  data: GroupUpdateWithoutCreatedByDataInput;
+}
+
+export interface FoodCreateManyWithoutGroupInput {
+  create?: Maybe<FoodCreateWithoutGroupInput[] | FoodCreateWithoutGroupInput>;
+  connect?: Maybe<FoodWhereUniqueInput[] | FoodWhereUniqueInput>;
+}
+
+export interface GroupUpdateWithoutCreatedByDataInput {
+  name?: Maybe<String>;
+  members?: Maybe<UserUpdateManyWithoutMemberOfGroupsInput>;
+  isPrivate?: Maybe<Boolean>;
+  foods?: Maybe<FoodUpdateManyWithoutGroupInput>;
+}
+
+export interface GroupWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  name?: Maybe<String>;
+  name_not?: Maybe<String>;
+  name_in?: Maybe<String[] | String>;
+  name_not_in?: Maybe<String[] | String>;
+  name_lt?: Maybe<String>;
+  name_lte?: Maybe<String>;
+  name_gt?: Maybe<String>;
+  name_gte?: Maybe<String>;
+  name_contains?: Maybe<String>;
+  name_not_contains?: Maybe<String>;
+  name_starts_with?: Maybe<String>;
+  name_not_starts_with?: Maybe<String>;
+  name_ends_with?: Maybe<String>;
+  name_not_ends_with?: Maybe<String>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  createdBy?: Maybe<UserWhereInput>;
+  members_every?: Maybe<UserWhereInput>;
+  members_some?: Maybe<UserWhereInput>;
+  members_none?: Maybe<UserWhereInput>;
+  isPrivate?: Maybe<Boolean>;
+  isPrivate_not?: Maybe<Boolean>;
+  foods_every?: Maybe<FoodWhereInput>;
+  foods_some?: Maybe<FoodWhereInput>;
+  foods_none?: Maybe<FoodWhereInput>;
+  AND?: Maybe<GroupWhereInput[] | GroupWhereInput>;
+  OR?: Maybe<GroupWhereInput[] | GroupWhereInput>;
+  NOT?: Maybe<GroupWhereInput[] | GroupWhereInput>;
+}
+
+export interface UserUpdateManyWithoutMemberOfGroupsInput {
+  create?: Maybe<
+    | UserCreateWithoutMemberOfGroupsInput[]
+    | UserCreateWithoutMemberOfGroupsInput
+  >;
+  delete?: Maybe<UserWhereUniqueInput[] | UserWhereUniqueInput>;
+  connect?: Maybe<UserWhereUniqueInput[] | UserWhereUniqueInput>;
+  set?: Maybe<UserWhereUniqueInput[] | UserWhereUniqueInput>;
+  disconnect?: Maybe<UserWhereUniqueInput[] | UserWhereUniqueInput>;
+  update?: Maybe<
+    | UserUpdateWithWhereUniqueWithoutMemberOfGroupsInput[]
+    | UserUpdateWithWhereUniqueWithoutMemberOfGroupsInput
+  >;
+  upsert?: Maybe<
+    | UserUpsertWithWhereUniqueWithoutMemberOfGroupsInput[]
+    | UserUpsertWithWhereUniqueWithoutMemberOfGroupsInput
+  >;
+  deleteMany?: Maybe<UserScalarWhereInput[] | UserScalarWhereInput>;
+  updateMany?: Maybe<
+    UserUpdateManyWithWhereNestedInput[] | UserUpdateManyWithWhereNestedInput
+  >;
+}
+
+export interface FoodSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<FoodWhereInput>;
+  AND?: Maybe<FoodSubscriptionWhereInput[] | FoodSubscriptionWhereInput>;
+  OR?: Maybe<FoodSubscriptionWhereInput[] | FoodSubscriptionWhereInput>;
+  NOT?: Maybe<FoodSubscriptionWhereInput[] | FoodSubscriptionWhereInput>;
+}
+
+export interface UserUpdateWithWhereUniqueWithoutMemberOfGroupsInput {
+  where: UserWhereUniqueInput;
+  data: UserUpdateWithoutMemberOfGroupsDataInput;
+}
+
+export interface UserUpdateInput {
+  name?: Maybe<String>;
+  email?: Maybe<String>;
+  password?: Maybe<String>;
+  foods?: Maybe<FoodUpdateManyWithoutPostedByInput>;
+  votes?: Maybe<VoteUpdateManyWithoutUserInput>;
+  createdGroups?: Maybe<GroupUpdateManyWithoutCreatedByInput>;
+  memberOfGroups?: Maybe<GroupUpdateManyWithoutMembersInput>;
+}
+
+export interface UserUpdateWithoutMemberOfGroupsDataInput {
+  name?: Maybe<String>;
+  email?: Maybe<String>;
+  password?: Maybe<String>;
+  foods?: Maybe<FoodUpdateManyWithoutPostedByInput>;
+  votes?: Maybe<VoteUpdateManyWithoutUserInput>;
+  createdGroups?: Maybe<GroupUpdateManyWithoutCreatedByInput>;
+}
+
+export interface GroupUpdateInput {
+  name?: Maybe<String>;
+  createdBy?: Maybe<UserUpdateOneRequiredWithoutCreatedGroupsInput>;
+  members?: Maybe<UserUpdateManyWithoutMemberOfGroupsInput>;
+  isPrivate?: Maybe<Boolean>;
+  foods?: Maybe<FoodUpdateManyWithoutGroupInput>;
+}
+
+export interface UserUpsertWithWhereUniqueWithoutMemberOfGroupsInput {
+  where: UserWhereUniqueInput;
+  update: UserUpdateWithoutMemberOfGroupsDataInput;
+  create: UserCreateWithoutMemberOfGroupsInput;
+}
+
+export interface UserUpsertWithoutFoodsInput {
+  update: UserUpdateWithoutFoodsDataInput;
+  create: UserCreateWithoutFoodsInput;
+}
+
+export interface UserScalarWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  name?: Maybe<String>;
+  name_not?: Maybe<String>;
+  name_in?: Maybe<String[] | String>;
+  name_not_in?: Maybe<String[] | String>;
+  name_lt?: Maybe<String>;
+  name_lte?: Maybe<String>;
+  name_gt?: Maybe<String>;
+  name_gte?: Maybe<String>;
+  name_contains?: Maybe<String>;
+  name_not_contains?: Maybe<String>;
+  name_starts_with?: Maybe<String>;
+  name_not_starts_with?: Maybe<String>;
+  name_ends_with?: Maybe<String>;
+  name_not_ends_with?: Maybe<String>;
+  email?: Maybe<String>;
+  email_not?: Maybe<String>;
+  email_in?: Maybe<String[] | String>;
+  email_not_in?: Maybe<String[] | String>;
+  email_lt?: Maybe<String>;
+  email_lte?: Maybe<String>;
+  email_gt?: Maybe<String>;
+  email_gte?: Maybe<String>;
+  email_contains?: Maybe<String>;
+  email_not_contains?: Maybe<String>;
+  email_starts_with?: Maybe<String>;
+  email_not_starts_with?: Maybe<String>;
+  email_ends_with?: Maybe<String>;
+  email_not_ends_with?: Maybe<String>;
+  password?: Maybe<String>;
+  password_not?: Maybe<String>;
+  password_in?: Maybe<String[] | String>;
+  password_not_in?: Maybe<String[] | String>;
+  password_lt?: Maybe<String>;
+  password_lte?: Maybe<String>;
+  password_gt?: Maybe<String>;
+  password_gte?: Maybe<String>;
+  password_contains?: Maybe<String>;
+  password_not_contains?: Maybe<String>;
+  password_starts_with?: Maybe<String>;
+  password_not_starts_with?: Maybe<String>;
+  password_ends_with?: Maybe<String>;
+  password_not_ends_with?: Maybe<String>;
+  AND?: Maybe<UserScalarWhereInput[] | UserScalarWhereInput>;
+  OR?: Maybe<UserScalarWhereInput[] | UserScalarWhereInput>;
+  NOT?: Maybe<UserScalarWhereInput[] | UserScalarWhereInput>;
+}
+
+export interface GroupUpsertWithoutFoodsInput {
+  update: GroupUpdateWithoutFoodsDataInput;
+  create: GroupCreateWithoutFoodsInput;
+}
+
+export interface UserUpdateManyWithWhereNestedInput {
+  where: UserScalarWhereInput;
+  data: UserUpdateManyDataInput;
+}
+
+export interface FoodCreateInput {
+  id?: Maybe<ID_Input>;
+  name: String;
+  quantity: Int;
+  inCart: Boolean;
+  postedBy?: Maybe<UserCreateOneWithoutFoodsInput>;
+  votes?: Maybe<VoteCreateManyWithoutFoodInput>;
+  group?: Maybe<GroupCreateOneWithoutFoodsInput>;
+}
+
+export interface UserUpdateManyDataInput {
+  name?: Maybe<String>;
+  email?: Maybe<String>;
+  password?: Maybe<String>;
+}
+
+export interface VoteCreateWithoutUserInput {
+  id?: Maybe<ID_Input>;
+  food: FoodCreateOneWithoutVotesInput;
+}
+
+export interface FoodUpdateManyWithoutGroupInput {
+  create?: Maybe<FoodCreateWithoutGroupInput[] | FoodCreateWithoutGroupInput>;
+  delete?: Maybe<FoodWhereUniqueInput[] | FoodWhereUniqueInput>;
+  connect?: Maybe<FoodWhereUniqueInput[] | FoodWhereUniqueInput>;
+  set?: Maybe<FoodWhereUniqueInput[] | FoodWhereUniqueInput>;
+  disconnect?: Maybe<FoodWhereUniqueInput[] | FoodWhereUniqueInput>;
+  update?: Maybe<
+    | FoodUpdateWithWhereUniqueWithoutGroupInput[]
+    | FoodUpdateWithWhereUniqueWithoutGroupInput
+  >;
+  upsert?: Maybe<
+    | FoodUpsertWithWhereUniqueWithoutGroupInput[]
+    | FoodUpsertWithWhereUniqueWithoutGroupInput
+  >;
+  deleteMany?: Maybe<FoodScalarWhereInput[] | FoodScalarWhereInput>;
+  updateMany?: Maybe<
+    FoodUpdateManyWithWhereNestedInput[] | FoodUpdateManyWithWhereNestedInput
+  >;
+}
+
+export interface GroupCreateWithoutFoodsInput {
+  id?: Maybe<ID_Input>;
+  name: String;
+  createdBy: UserCreateOneWithoutCreatedGroupsInput;
+  members?: Maybe<UserCreateManyWithoutMemberOfGroupsInput>;
+  isPrivate: Boolean;
+}
+
+export interface FoodUpdateWithWhereUniqueWithoutGroupInput {
   where: FoodWhereUniqueInput;
-  data: FoodUpdateWithoutPostedByDataInput;
+  data: FoodUpdateWithoutGroupDataInput;
+}
+
+export interface FoodCreateWithoutPostedByInput {
+  id?: Maybe<ID_Input>;
+  name: String;
+  quantity: Int;
+  inCart: Boolean;
+  votes?: Maybe<VoteCreateManyWithoutFoodInput>;
+  group?: Maybe<GroupCreateOneWithoutFoodsInput>;
+}
+
+export interface FoodUpdateWithoutGroupDataInput {
+  name?: Maybe<String>;
+  quantity?: Maybe<Int>;
+  inCart?: Maybe<Boolean>;
+  postedBy?: Maybe<UserUpdateOneWithoutFoodsInput>;
+  votes?: Maybe<VoteUpdateManyWithoutFoodInput>;
+}
+
+export interface UserCreateWithoutVotesInput {
+  id?: Maybe<ID_Input>;
+  name: String;
+  email: String;
+  password: String;
+  foods?: Maybe<FoodCreateManyWithoutPostedByInput>;
+  createdGroups?: Maybe<GroupCreateManyWithoutCreatedByInput>;
+  memberOfGroups?: Maybe<GroupCreateManyWithoutMembersInput>;
+}
+
+export interface FoodUpsertWithWhereUniqueWithoutGroupInput {
+  where: FoodWhereUniqueInput;
+  update: FoodUpdateWithoutGroupDataInput;
+  create: FoodCreateWithoutGroupInput;
+}
+
+export interface UserCreateWithoutMemberOfGroupsInput {
+  id?: Maybe<ID_Input>;
+  name: String;
+  email: String;
+  password: String;
+  foods?: Maybe<FoodCreateManyWithoutPostedByInput>;
+  votes?: Maybe<VoteCreateManyWithoutUserInput>;
+  createdGroups?: Maybe<GroupCreateManyWithoutCreatedByInput>;
+}
+
+export interface FoodScalarWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  name?: Maybe<String>;
+  name_not?: Maybe<String>;
+  name_in?: Maybe<String[] | String>;
+  name_not_in?: Maybe<String[] | String>;
+  name_lt?: Maybe<String>;
+  name_lte?: Maybe<String>;
+  name_gt?: Maybe<String>;
+  name_gte?: Maybe<String>;
+  name_contains?: Maybe<String>;
+  name_not_contains?: Maybe<String>;
+  name_starts_with?: Maybe<String>;
+  name_not_starts_with?: Maybe<String>;
+  name_ends_with?: Maybe<String>;
+  name_not_ends_with?: Maybe<String>;
+  quantity?: Maybe<Int>;
+  quantity_not?: Maybe<Int>;
+  quantity_in?: Maybe<Int[] | Int>;
+  quantity_not_in?: Maybe<Int[] | Int>;
+  quantity_lt?: Maybe<Int>;
+  quantity_lte?: Maybe<Int>;
+  quantity_gt?: Maybe<Int>;
+  quantity_gte?: Maybe<Int>;
+  inCart?: Maybe<Boolean>;
+  inCart_not?: Maybe<Boolean>;
+  AND?: Maybe<FoodScalarWhereInput[] | FoodScalarWhereInput>;
+  OR?: Maybe<FoodScalarWhereInput[] | FoodScalarWhereInput>;
+  NOT?: Maybe<FoodScalarWhereInput[] | FoodScalarWhereInput>;
+}
+
+export interface UserSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<UserWhereInput>;
+  AND?: Maybe<UserSubscriptionWhereInput[] | UserSubscriptionWhereInput>;
+  OR?: Maybe<UserSubscriptionWhereInput[] | UserSubscriptionWhereInput>;
+  NOT?: Maybe<UserSubscriptionWhereInput[] | UserSubscriptionWhereInput>;
+}
+
+export interface FoodUpdateManyWithWhereNestedInput {
+  where: FoodScalarWhereInput;
+  data: FoodUpdateManyDataInput;
+}
+
+export interface GroupUpdateManyMutationInput {
+  name?: Maybe<String>;
+  isPrivate?: Maybe<Boolean>;
+}
+
+export interface FoodUpdateManyDataInput {
+  name?: Maybe<String>;
+  quantity?: Maybe<Int>;
+  inCart?: Maybe<Boolean>;
+}
+
+export interface FoodUpsertWithoutVotesInput {
+  update: FoodUpdateWithoutVotesDataInput;
+  create: FoodCreateWithoutVotesInput;
+}
+
+export interface GroupUpsertWithWhereUniqueWithoutCreatedByInput {
+  where: GroupWhereUniqueInput;
+  update: GroupUpdateWithoutCreatedByDataInput;
+  create: GroupCreateWithoutCreatedByInput;
+}
+
+export interface UserCreateWithoutFoodsInput {
+  id?: Maybe<ID_Input>;
+  name: String;
+  email: String;
+  password: String;
+  votes?: Maybe<VoteCreateManyWithoutUserInput>;
+  createdGroups?: Maybe<GroupCreateManyWithoutCreatedByInput>;
+  memberOfGroups?: Maybe<GroupCreateManyWithoutMembersInput>;
+}
+
+export interface GroupScalarWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  name?: Maybe<String>;
+  name_not?: Maybe<String>;
+  name_in?: Maybe<String[] | String>;
+  name_not_in?: Maybe<String[] | String>;
+  name_lt?: Maybe<String>;
+  name_lte?: Maybe<String>;
+  name_gt?: Maybe<String>;
+  name_gte?: Maybe<String>;
+  name_contains?: Maybe<String>;
+  name_not_contains?: Maybe<String>;
+  name_starts_with?: Maybe<String>;
+  name_not_starts_with?: Maybe<String>;
+  name_ends_with?: Maybe<String>;
+  name_not_ends_with?: Maybe<String>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  isPrivate?: Maybe<Boolean>;
+  isPrivate_not?: Maybe<Boolean>;
+  AND?: Maybe<GroupScalarWhereInput[] | GroupScalarWhereInput>;
+  OR?: Maybe<GroupScalarWhereInput[] | GroupScalarWhereInput>;
+  NOT?: Maybe<GroupScalarWhereInput[] | GroupScalarWhereInput>;
+}
+
+export interface UserCreateWithoutCreatedGroupsInput {
+  id?: Maybe<ID_Input>;
+  name: String;
+  email: String;
+  password: String;
+  foods?: Maybe<FoodCreateManyWithoutPostedByInput>;
+  votes?: Maybe<VoteCreateManyWithoutUserInput>;
+  memberOfGroups?: Maybe<GroupCreateManyWithoutMembersInput>;
+}
+
+export interface GroupUpdateManyWithWhereNestedInput {
+  where: GroupScalarWhereInput;
+  data: GroupUpdateManyDataInput;
+}
+
+export interface GroupCreateWithoutCreatedByInput {
+  id?: Maybe<ID_Input>;
+  name: String;
+  members?: Maybe<UserCreateManyWithoutMemberOfGroupsInput>;
+  isPrivate: Boolean;
+  foods?: Maybe<FoodCreateManyWithoutGroupInput>;
+}
+
+export interface GroupUpdateManyDataInput {
+  name?: Maybe<String>;
+  isPrivate?: Maybe<Boolean>;
+}
+
+export interface VoteCreateInput {
+  id?: Maybe<ID_Input>;
+  food: FoodCreateOneWithoutVotesInput;
+  user: UserCreateOneWithoutVotesInput;
+}
+
+export interface GroupUpdateManyWithoutMembersInput {
+  create?: Maybe<
+    GroupCreateWithoutMembersInput[] | GroupCreateWithoutMembersInput
+  >;
+  delete?: Maybe<GroupWhereUniqueInput[] | GroupWhereUniqueInput>;
+  connect?: Maybe<GroupWhereUniqueInput[] | GroupWhereUniqueInput>;
+  set?: Maybe<GroupWhereUniqueInput[] | GroupWhereUniqueInput>;
+  disconnect?: Maybe<GroupWhereUniqueInput[] | GroupWhereUniqueInput>;
+  update?: Maybe<
+    | GroupUpdateWithWhereUniqueWithoutMembersInput[]
+    | GroupUpdateWithWhereUniqueWithoutMembersInput
+  >;
+  upsert?: Maybe<
+    | GroupUpsertWithWhereUniqueWithoutMembersInput[]
+    | GroupUpsertWithWhereUniqueWithoutMembersInput
+  >;
+  deleteMany?: Maybe<GroupScalarWhereInput[] | GroupScalarWhereInput>;
+  updateMany?: Maybe<
+    GroupUpdateManyWithWhereNestedInput[] | GroupUpdateManyWithWhereNestedInput
+  >;
+}
+
+export interface FoodUpsertWithWhereUniqueWithoutPostedByInput {
+  where: FoodWhereUniqueInput;
+  update: FoodUpdateWithoutPostedByDataInput;
+  create: FoodCreateWithoutPostedByInput;
+}
+
+export interface UserUpsertWithoutVotesInput {
+  update: UserUpdateWithoutVotesDataInput;
+  create: UserCreateWithoutVotesInput;
+}
+
+export interface GroupUpsertWithWhereUniqueWithoutMembersInput {
+  where: GroupWhereUniqueInput;
+  update: GroupUpdateWithoutMembersDataInput;
+  create: GroupCreateWithoutMembersInput;
+}
+
+export interface GroupUpdateWithoutMembersDataInput {
+  name?: Maybe<String>;
+  createdBy?: Maybe<UserUpdateOneRequiredWithoutCreatedGroupsInput>;
+  isPrivate?: Maybe<Boolean>;
+  foods?: Maybe<FoodUpdateManyWithoutGroupInput>;
+}
+
+export interface GroupUpdateWithWhereUniqueWithoutMembersInput {
+  where: GroupWhereUniqueInput;
+  data: GroupUpdateWithoutMembersDataInput;
 }
 
 export interface FoodCreateWithoutVotesInput {
@@ -230,16 +1265,13 @@ export interface FoodCreateWithoutVotesInput {
   quantity: Int;
   inCart: Boolean;
   postedBy?: Maybe<UserCreateOneWithoutFoodsInput>;
+  group?: Maybe<GroupCreateOneWithoutFoodsInput>;
 }
 
-export interface VoteUpdateWithWhereUniqueWithoutUserInput {
-  where: VoteWhereUniqueInput;
-  data: VoteUpdateWithoutUserDataInput;
-}
-
-export interface VoteCreateManyWithoutFoodInput {
-  create?: Maybe<VoteCreateWithoutFoodInput[] | VoteCreateWithoutFoodInput>;
-  connect?: Maybe<VoteWhereUniqueInput[] | VoteWhereUniqueInput>;
+export interface FoodUpdateManyMutationInput {
+  name?: Maybe<String>;
+  quantity?: Maybe<Int>;
+  inCart?: Maybe<Boolean>;
 }
 
 export interface UserWhereInput {
@@ -305,6 +1337,12 @@ export interface UserWhereInput {
   votes_every?: Maybe<VoteWhereInput>;
   votes_some?: Maybe<VoteWhereInput>;
   votes_none?: Maybe<VoteWhereInput>;
+  createdGroups_every?: Maybe<GroupWhereInput>;
+  createdGroups_some?: Maybe<GroupWhereInput>;
+  createdGroups_none?: Maybe<GroupWhereInput>;
+  memberOfGroups_every?: Maybe<GroupWhereInput>;
+  memberOfGroups_some?: Maybe<GroupWhereInput>;
+  memberOfGroups_none?: Maybe<GroupWhereInput>;
   AND?: Maybe<UserWhereInput[] | UserWhereInput>;
   OR?: Maybe<UserWhereInput[] | UserWhereInput>;
   NOT?: Maybe<UserWhereInput[] | UserWhereInput>;
@@ -313,461 +1351,6 @@ export interface UserWhereInput {
 export interface VoteCreateWithoutFoodInput {
   id?: Maybe<ID_Input>;
   user: UserCreateOneWithoutVotesInput;
-}
-
-export interface VoteSubscriptionWhereInput {
-  mutation_in?: Maybe<MutationType[] | MutationType>;
-  updatedFields_contains?: Maybe<String>;
-  updatedFields_contains_every?: Maybe<String[] | String>;
-  updatedFields_contains_some?: Maybe<String[] | String>;
-  node?: Maybe<VoteWhereInput>;
-  AND?: Maybe<VoteSubscriptionWhereInput[] | VoteSubscriptionWhereInput>;
-  OR?: Maybe<VoteSubscriptionWhereInput[] | VoteSubscriptionWhereInput>;
-  NOT?: Maybe<VoteSubscriptionWhereInput[] | VoteSubscriptionWhereInput>;
-}
-
-export interface UserCreateOneWithoutVotesInput {
-  create?: Maybe<UserCreateWithoutVotesInput>;
-  connect?: Maybe<UserWhereUniqueInput>;
-}
-
-export interface FoodSubscriptionWhereInput {
-  mutation_in?: Maybe<MutationType[] | MutationType>;
-  updatedFields_contains?: Maybe<String>;
-  updatedFields_contains_every?: Maybe<String[] | String>;
-  updatedFields_contains_some?: Maybe<String[] | String>;
-  node?: Maybe<FoodWhereInput>;
-  AND?: Maybe<FoodSubscriptionWhereInput[] | FoodSubscriptionWhereInput>;
-  OR?: Maybe<FoodSubscriptionWhereInput[] | FoodSubscriptionWhereInput>;
-  NOT?: Maybe<FoodSubscriptionWhereInput[] | FoodSubscriptionWhereInput>;
-}
-
-export interface UserCreateWithoutVotesInput {
-  id?: Maybe<ID_Input>;
-  name: String;
-  email: String;
-  password: String;
-  foods?: Maybe<FoodCreateManyWithoutPostedByInput>;
-}
-
-export interface VoteCreateInput {
-  id?: Maybe<ID_Input>;
-  food: FoodCreateOneWithoutVotesInput;
-  user: UserCreateOneWithoutVotesInput;
-}
-
-export interface FoodCreateManyWithoutPostedByInput {
-  create?: Maybe<
-    FoodCreateWithoutPostedByInput[] | FoodCreateWithoutPostedByInput
-  >;
-  connect?: Maybe<FoodWhereUniqueInput[] | FoodWhereUniqueInput>;
-}
-
-export interface UserUpdateInput {
-  name?: Maybe<String>;
-  email?: Maybe<String>;
-  password?: Maybe<String>;
-  foods?: Maybe<FoodUpdateManyWithoutPostedByInput>;
-  votes?: Maybe<VoteUpdateManyWithoutUserInput>;
-}
-
-export interface FoodCreateWithoutPostedByInput {
-  id?: Maybe<ID_Input>;
-  name: String;
-  quantity: Int;
-  inCart: Boolean;
-  votes?: Maybe<VoteCreateManyWithoutFoodInput>;
-}
-
-export interface UserCreateInput {
-  id?: Maybe<ID_Input>;
-  name: String;
-  email: String;
-  password: String;
-  foods?: Maybe<FoodCreateManyWithoutPostedByInput>;
-  votes?: Maybe<VoteCreateManyWithoutUserInput>;
-}
-
-export interface FoodUpdateInput {
-  name?: Maybe<String>;
-  quantity?: Maybe<Int>;
-  inCart?: Maybe<Boolean>;
-  postedBy?: Maybe<UserUpdateOneWithoutFoodsInput>;
-  votes?: Maybe<VoteUpdateManyWithoutFoodInput>;
-}
-
-export interface VoteUpsertWithWhereUniqueWithoutFoodInput {
-  where: VoteWhereUniqueInput;
-  update: VoteUpdateWithoutFoodDataInput;
-  create: VoteCreateWithoutFoodInput;
-}
-
-export interface FoodUpsertWithWhereUniqueWithoutPostedByInput {
-  where: FoodWhereUniqueInput;
-  update: FoodUpdateWithoutPostedByDataInput;
-  create: FoodCreateWithoutPostedByInput;
-}
-
-export type VoteWhereUniqueInput = AtLeastOne<{
-  id: Maybe<ID_Input>;
-}>;
-
-export interface UserUpdateWithoutFoodsDataInput {
-  name?: Maybe<String>;
-  email?: Maybe<String>;
-  password?: Maybe<String>;
-  votes?: Maybe<VoteUpdateManyWithoutUserInput>;
-}
-
-export interface FoodUpdateManyWithWhereNestedInput {
-  where: FoodScalarWhereInput;
-  data: FoodUpdateManyDataInput;
-}
-
-export interface VoteUpdateManyWithoutUserInput {
-  create?: Maybe<VoteCreateWithoutUserInput[] | VoteCreateWithoutUserInput>;
-  delete?: Maybe<VoteWhereUniqueInput[] | VoteWhereUniqueInput>;
-  connect?: Maybe<VoteWhereUniqueInput[] | VoteWhereUniqueInput>;
-  set?: Maybe<VoteWhereUniqueInput[] | VoteWhereUniqueInput>;
-  disconnect?: Maybe<VoteWhereUniqueInput[] | VoteWhereUniqueInput>;
-  update?: Maybe<
-    | VoteUpdateWithWhereUniqueWithoutUserInput[]
-    | VoteUpdateWithWhereUniqueWithoutUserInput
-  >;
-  upsert?: Maybe<
-    | VoteUpsertWithWhereUniqueWithoutUserInput[]
-    | VoteUpsertWithWhereUniqueWithoutUserInput
-  >;
-  deleteMany?: Maybe<VoteScalarWhereInput[] | VoteScalarWhereInput>;
-}
-
-export interface UserCreateOneWithoutFoodsInput {
-  create?: Maybe<UserCreateWithoutFoodsInput>;
-  connect?: Maybe<UserWhereUniqueInput>;
-}
-
-export interface FoodUpdateWithoutPostedByDataInput {
-  name?: Maybe<String>;
-  quantity?: Maybe<Int>;
-  inCart?: Maybe<Boolean>;
-  votes?: Maybe<VoteUpdateManyWithoutFoodInput>;
-}
-
-export interface VoteCreateManyWithoutUserInput {
-  create?: Maybe<VoteCreateWithoutUserInput[] | VoteCreateWithoutUserInput>;
-  connect?: Maybe<VoteWhereUniqueInput[] | VoteWhereUniqueInput>;
-}
-
-export interface VoteUpdateWithoutUserDataInput {
-  food?: Maybe<FoodUpdateOneRequiredWithoutVotesInput>;
-}
-
-export interface FoodWhereInput {
-  id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
-  createdAt?: Maybe<DateTimeInput>;
-  createdAt_not?: Maybe<DateTimeInput>;
-  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_lt?: Maybe<DateTimeInput>;
-  createdAt_lte?: Maybe<DateTimeInput>;
-  createdAt_gt?: Maybe<DateTimeInput>;
-  createdAt_gte?: Maybe<DateTimeInput>;
-  name?: Maybe<String>;
-  name_not?: Maybe<String>;
-  name_in?: Maybe<String[] | String>;
-  name_not_in?: Maybe<String[] | String>;
-  name_lt?: Maybe<String>;
-  name_lte?: Maybe<String>;
-  name_gt?: Maybe<String>;
-  name_gte?: Maybe<String>;
-  name_contains?: Maybe<String>;
-  name_not_contains?: Maybe<String>;
-  name_starts_with?: Maybe<String>;
-  name_not_starts_with?: Maybe<String>;
-  name_ends_with?: Maybe<String>;
-  name_not_ends_with?: Maybe<String>;
-  quantity?: Maybe<Int>;
-  quantity_not?: Maybe<Int>;
-  quantity_in?: Maybe<Int[] | Int>;
-  quantity_not_in?: Maybe<Int[] | Int>;
-  quantity_lt?: Maybe<Int>;
-  quantity_lte?: Maybe<Int>;
-  quantity_gt?: Maybe<Int>;
-  quantity_gte?: Maybe<Int>;
-  inCart?: Maybe<Boolean>;
-  inCart_not?: Maybe<Boolean>;
-  postedBy?: Maybe<UserWhereInput>;
-  votes_every?: Maybe<VoteWhereInput>;
-  votes_some?: Maybe<VoteWhereInput>;
-  votes_none?: Maybe<VoteWhereInput>;
-  AND?: Maybe<FoodWhereInput[] | FoodWhereInput>;
-  OR?: Maybe<FoodWhereInput[] | FoodWhereInput>;
-  NOT?: Maybe<FoodWhereInput[] | FoodWhereInput>;
-}
-
-export interface FoodUpdateOneRequiredWithoutVotesInput {
-  create?: Maybe<FoodCreateWithoutVotesInput>;
-  update?: Maybe<FoodUpdateWithoutVotesDataInput>;
-  upsert?: Maybe<FoodUpsertWithoutVotesInput>;
-  connect?: Maybe<FoodWhereUniqueInput>;
-}
-
-export interface UserSubscriptionWhereInput {
-  mutation_in?: Maybe<MutationType[] | MutationType>;
-  updatedFields_contains?: Maybe<String>;
-  updatedFields_contains_every?: Maybe<String[] | String>;
-  updatedFields_contains_some?: Maybe<String[] | String>;
-  node?: Maybe<UserWhereInput>;
-  AND?: Maybe<UserSubscriptionWhereInput[] | UserSubscriptionWhereInput>;
-  OR?: Maybe<UserSubscriptionWhereInput[] | UserSubscriptionWhereInput>;
-  NOT?: Maybe<UserSubscriptionWhereInput[] | UserSubscriptionWhereInput>;
-}
-
-export interface FoodUpdateWithoutVotesDataInput {
-  name?: Maybe<String>;
-  quantity?: Maybe<Int>;
-  inCart?: Maybe<Boolean>;
-  postedBy?: Maybe<UserUpdateOneWithoutFoodsInput>;
-}
-
-export interface UserUpdateManyMutationInput {
-  name?: Maybe<String>;
-  email?: Maybe<String>;
-  password?: Maybe<String>;
-}
-
-export interface FoodUpsertWithoutVotesInput {
-  update: FoodUpdateWithoutVotesDataInput;
-  create: FoodCreateWithoutVotesInput;
-}
-
-export interface FoodUpdateManyMutationInput {
-  name?: Maybe<String>;
-  quantity?: Maybe<Int>;
-  inCart?: Maybe<Boolean>;
-}
-
-export interface VoteUpsertWithWhereUniqueWithoutUserInput {
-  where: VoteWhereUniqueInput;
-  update: VoteUpdateWithoutUserDataInput;
-  create: VoteCreateWithoutUserInput;
-}
-
-export interface FoodUpdateManyDataInput {
-  name?: Maybe<String>;
-  quantity?: Maybe<Int>;
-  inCart?: Maybe<Boolean>;
-}
-
-export interface VoteScalarWhereInput {
-  id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
-  AND?: Maybe<VoteScalarWhereInput[] | VoteScalarWhereInput>;
-  OR?: Maybe<VoteScalarWhereInput[] | VoteScalarWhereInput>;
-  NOT?: Maybe<VoteScalarWhereInput[] | VoteScalarWhereInput>;
-}
-
-export interface FoodCreateInput {
-  id?: Maybe<ID_Input>;
-  name: String;
-  quantity: Int;
-  inCart: Boolean;
-  postedBy?: Maybe<UserCreateOneWithoutFoodsInput>;
-  votes?: Maybe<VoteCreateManyWithoutFoodInput>;
-}
-
-export interface UserUpsertWithoutFoodsInput {
-  update: UserUpdateWithoutFoodsDataInput;
-  create: UserCreateWithoutFoodsInput;
-}
-
-export interface VoteCreateWithoutUserInput {
-  id?: Maybe<ID_Input>;
-  food: FoodCreateOneWithoutVotesInput;
-}
-
-export interface VoteUpdateManyWithoutFoodInput {
-  create?: Maybe<VoteCreateWithoutFoodInput[] | VoteCreateWithoutFoodInput>;
-  delete?: Maybe<VoteWhereUniqueInput[] | VoteWhereUniqueInput>;
-  connect?: Maybe<VoteWhereUniqueInput[] | VoteWhereUniqueInput>;
-  set?: Maybe<VoteWhereUniqueInput[] | VoteWhereUniqueInput>;
-  disconnect?: Maybe<VoteWhereUniqueInput[] | VoteWhereUniqueInput>;
-  update?: Maybe<
-    | VoteUpdateWithWhereUniqueWithoutFoodInput[]
-    | VoteUpdateWithWhereUniqueWithoutFoodInput
-  >;
-  upsert?: Maybe<
-    | VoteUpsertWithWhereUniqueWithoutFoodInput[]
-    | VoteUpsertWithWhereUniqueWithoutFoodInput
-  >;
-  deleteMany?: Maybe<VoteScalarWhereInput[] | VoteScalarWhereInput>;
-}
-
-export interface VoteUpdateInput {
-  food?: Maybe<FoodUpdateOneRequiredWithoutVotesInput>;
-  user?: Maybe<UserUpdateOneRequiredWithoutVotesInput>;
-}
-
-export interface VoteUpdateWithWhereUniqueWithoutFoodInput {
-  where: VoteWhereUniqueInput;
-  data: VoteUpdateWithoutFoodDataInput;
-}
-
-export interface UserUpsertWithoutVotesInput {
-  update: UserUpdateWithoutVotesDataInput;
-  create: UserCreateWithoutVotesInput;
-}
-
-export interface FoodUpdateManyWithoutPostedByInput {
-  create?: Maybe<
-    FoodCreateWithoutPostedByInput[] | FoodCreateWithoutPostedByInput
-  >;
-  delete?: Maybe<FoodWhereUniqueInput[] | FoodWhereUniqueInput>;
-  connect?: Maybe<FoodWhereUniqueInput[] | FoodWhereUniqueInput>;
-  set?: Maybe<FoodWhereUniqueInput[] | FoodWhereUniqueInput>;
-  disconnect?: Maybe<FoodWhereUniqueInput[] | FoodWhereUniqueInput>;
-  update?: Maybe<
-    | FoodUpdateWithWhereUniqueWithoutPostedByInput[]
-    | FoodUpdateWithWhereUniqueWithoutPostedByInput
-  >;
-  upsert?: Maybe<
-    | FoodUpsertWithWhereUniqueWithoutPostedByInput[]
-    | FoodUpsertWithWhereUniqueWithoutPostedByInput
-  >;
-  deleteMany?: Maybe<FoodScalarWhereInput[] | FoodScalarWhereInput>;
-  updateMany?: Maybe<
-    FoodUpdateManyWithWhereNestedInput[] | FoodUpdateManyWithWhereNestedInput
-  >;
-}
-
-export interface UserUpdateWithoutVotesDataInput {
-  name?: Maybe<String>;
-  email?: Maybe<String>;
-  password?: Maybe<String>;
-  foods?: Maybe<FoodUpdateManyWithoutPostedByInput>;
-}
-
-export interface UserUpdateOneRequiredWithoutVotesInput {
-  create?: Maybe<UserCreateWithoutVotesInput>;
-  update?: Maybe<UserUpdateWithoutVotesDataInput>;
-  upsert?: Maybe<UserUpsertWithoutVotesInput>;
-  connect?: Maybe<UserWhereUniqueInput>;
-}
-
-export interface VoteUpdateWithoutFoodDataInput {
-  user?: Maybe<UserUpdateOneRequiredWithoutVotesInput>;
-}
-
-export interface FoodScalarWhereInput {
-  id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
-  createdAt?: Maybe<DateTimeInput>;
-  createdAt_not?: Maybe<DateTimeInput>;
-  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_lt?: Maybe<DateTimeInput>;
-  createdAt_lte?: Maybe<DateTimeInput>;
-  createdAt_gt?: Maybe<DateTimeInput>;
-  createdAt_gte?: Maybe<DateTimeInput>;
-  name?: Maybe<String>;
-  name_not?: Maybe<String>;
-  name_in?: Maybe<String[] | String>;
-  name_not_in?: Maybe<String[] | String>;
-  name_lt?: Maybe<String>;
-  name_lte?: Maybe<String>;
-  name_gt?: Maybe<String>;
-  name_gte?: Maybe<String>;
-  name_contains?: Maybe<String>;
-  name_not_contains?: Maybe<String>;
-  name_starts_with?: Maybe<String>;
-  name_not_starts_with?: Maybe<String>;
-  name_ends_with?: Maybe<String>;
-  name_not_ends_with?: Maybe<String>;
-  quantity?: Maybe<Int>;
-  quantity_not?: Maybe<Int>;
-  quantity_in?: Maybe<Int[] | Int>;
-  quantity_not_in?: Maybe<Int[] | Int>;
-  quantity_lt?: Maybe<Int>;
-  quantity_lte?: Maybe<Int>;
-  quantity_gt?: Maybe<Int>;
-  quantity_gte?: Maybe<Int>;
-  inCart?: Maybe<Boolean>;
-  inCart_not?: Maybe<Boolean>;
-  AND?: Maybe<FoodScalarWhereInput[] | FoodScalarWhereInput>;
-  OR?: Maybe<FoodScalarWhereInput[] | FoodScalarWhereInput>;
-  NOT?: Maybe<FoodScalarWhereInput[] | FoodScalarWhereInput>;
-}
-
-export type UserWhereUniqueInput = AtLeastOne<{
-  id: Maybe<ID_Input>;
-  email?: Maybe<String>;
-}>;
-
-export interface VoteWhereInput {
-  id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
-  food?: Maybe<FoodWhereInput>;
-  user?: Maybe<UserWhereInput>;
-  AND?: Maybe<VoteWhereInput[] | VoteWhereInput>;
-  OR?: Maybe<VoteWhereInput[] | VoteWhereInput>;
-  NOT?: Maybe<VoteWhereInput[] | VoteWhereInput>;
-}
-
-export interface UserCreateWithoutFoodsInput {
-  id?: Maybe<ID_Input>;
-  name: String;
-  email: String;
-  password: String;
-  votes?: Maybe<VoteCreateManyWithoutUserInput>;
 }
 
 export interface NodeNode {
@@ -790,21 +1373,25 @@ export interface VotePreviousValuesSubscription
   id: () => Promise<AsyncIterator<ID_Output>>;
 }
 
-export interface FoodEdge {
-  node: Food;
-  cursor: String;
+export interface FoodConnection {
+  pageInfo: PageInfo;
+  edges: FoodEdge[];
 }
 
-export interface FoodEdgePromise extends Promise<FoodEdge>, Fragmentable {
-  node: <T = FoodPromise>() => T;
-  cursor: () => Promise<String>;
-}
-
-export interface FoodEdgeSubscription
-  extends Promise<AsyncIterator<FoodEdge>>,
+export interface FoodConnectionPromise
+  extends Promise<FoodConnection>,
     Fragmentable {
-  node: <T = FoodSubscription>() => T;
-  cursor: () => Promise<AsyncIterator<String>>;
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<FoodEdge>>() => T;
+  aggregate: <T = AggregateFoodPromise>() => T;
+}
+
+export interface FoodConnectionSubscription
+  extends Promise<AsyncIterator<FoodConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<FoodEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateFoodSubscription>() => T;
 }
 
 export interface User {
@@ -831,6 +1418,24 @@ export interface UserPromise extends Promise<User>, Fragmentable {
   votes: <T = FragmentableArray<Vote>>(args?: {
     where?: VoteWhereInput;
     orderBy?: VoteOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  createdGroups: <T = FragmentableArray<Group>>(args?: {
+    where?: GroupWhereInput;
+    orderBy?: GroupOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  memberOfGroups: <T = FragmentableArray<Group>>(args?: {
+    where?: GroupWhereInput;
+    orderBy?: GroupOrderByInput;
     skip?: Int;
     after?: String;
     before?: String;
@@ -864,6 +1469,24 @@ export interface UserSubscription
     first?: Int;
     last?: Int;
   }) => T;
+  createdGroups: <T = Promise<AsyncIterator<GroupSubscription>>>(args?: {
+    where?: GroupWhereInput;
+    orderBy?: GroupOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  memberOfGroups: <T = Promise<AsyncIterator<GroupSubscription>>>(args?: {
+    where?: GroupWhereInput;
+    orderBy?: GroupOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
 }
 
 export interface UserNullablePromise
@@ -885,6 +1508,24 @@ export interface UserNullablePromise
   votes: <T = FragmentableArray<Vote>>(args?: {
     where?: VoteWhereInput;
     orderBy?: VoteOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  createdGroups: <T = FragmentableArray<Group>>(args?: {
+    where?: GroupWhereInput;
+    orderBy?: GroupOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  memberOfGroups: <T = FragmentableArray<Group>>(args?: {
+    where?: GroupWhereInput;
+    orderBy?: GroupOrderByInput;
     skip?: Int;
     after?: String;
     before?: String;
@@ -916,6 +1557,31 @@ export interface PageInfoSubscription
   endCursor: () => Promise<AsyncIterator<String>>;
 }
 
+export interface UserSubscriptionPayload {
+  mutation: MutationType;
+  node: User;
+  updatedFields: String[];
+  previousValues: UserPreviousValues;
+}
+
+export interface UserSubscriptionPayloadPromise
+  extends Promise<UserSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = UserPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = UserPreviousValuesPromise>() => T;
+}
+
+export interface UserSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<UserSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = UserSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = UserPreviousValuesSubscription>() => T;
+}
+
 export interface AggregateVote {
   count: Int;
 }
@@ -932,25 +1598,21 @@ export interface AggregateVoteSubscription
   count: () => Promise<AsyncIterator<Int>>;
 }
 
-export interface FoodConnection {
-  pageInfo: PageInfo;
-  edges: FoodEdge[];
+export interface VoteEdge {
+  node: Vote;
+  cursor: String;
 }
 
-export interface FoodConnectionPromise
-  extends Promise<FoodConnection>,
-    Fragmentable {
-  pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<FoodEdge>>() => T;
-  aggregate: <T = AggregateFoodPromise>() => T;
+export interface VoteEdgePromise extends Promise<VoteEdge>, Fragmentable {
+  node: <T = VotePromise>() => T;
+  cursor: () => Promise<String>;
 }
 
-export interface FoodConnectionSubscription
-  extends Promise<AsyncIterator<FoodConnection>>,
+export interface VoteEdgeSubscription
+  extends Promise<AsyncIterator<VoteEdge>>,
     Fragmentable {
-  pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<FoodEdgeSubscription>>>() => T;
-  aggregate: <T = AggregateFoodSubscription>() => T;
+  node: <T = VoteSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
 }
 
 export interface VoteConnection {
@@ -974,32 +1636,6 @@ export interface VoteConnectionSubscription
   aggregate: <T = AggregateVoteSubscription>() => T;
 }
 
-export interface Vote {
-  id: ID_Output;
-}
-
-export interface VotePromise extends Promise<Vote>, Fragmentable {
-  id: () => Promise<ID_Output>;
-  food: <T = FoodPromise>() => T;
-  user: <T = UserPromise>() => T;
-}
-
-export interface VoteSubscription
-  extends Promise<AsyncIterator<Vote>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  food: <T = FoodSubscription>() => T;
-  user: <T = UserSubscription>() => T;
-}
-
-export interface VoteNullablePromise
-  extends Promise<Vote | null>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  food: <T = FoodPromise>() => T;
-  user: <T = UserPromise>() => T;
-}
-
 export interface UserEdge {
   node: User;
   cursor: String;
@@ -1015,6 +1651,161 @@ export interface UserEdgeSubscription
     Fragmentable {
   node: <T = UserSubscription>() => T;
   cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface Group {
+  id: ID_Output;
+  name: String;
+  createdAt: DateTimeOutput;
+  isPrivate: Boolean;
+}
+
+export interface GroupPromise extends Promise<Group>, Fragmentable {
+  id: () => Promise<ID_Output>;
+  name: () => Promise<String>;
+  createdAt: () => Promise<DateTimeOutput>;
+  createdBy: <T = UserPromise>() => T;
+  members: <T = FragmentableArray<User>>(args?: {
+    where?: UserWhereInput;
+    orderBy?: UserOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  isPrivate: () => Promise<Boolean>;
+  foods: <T = FragmentableArray<Food>>(args?: {
+    where?: FoodWhereInput;
+    orderBy?: FoodOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+}
+
+export interface GroupSubscription
+  extends Promise<AsyncIterator<Group>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  name: () => Promise<AsyncIterator<String>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  createdBy: <T = UserSubscription>() => T;
+  members: <T = Promise<AsyncIterator<UserSubscription>>>(args?: {
+    where?: UserWhereInput;
+    orderBy?: UserOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  isPrivate: () => Promise<AsyncIterator<Boolean>>;
+  foods: <T = Promise<AsyncIterator<FoodSubscription>>>(args?: {
+    where?: FoodWhereInput;
+    orderBy?: FoodOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+}
+
+export interface GroupNullablePromise
+  extends Promise<Group | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  name: () => Promise<String>;
+  createdAt: () => Promise<DateTimeOutput>;
+  createdBy: <T = UserPromise>() => T;
+  members: <T = FragmentableArray<User>>(args?: {
+    where?: UserWhereInput;
+    orderBy?: UserOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  isPrivate: () => Promise<Boolean>;
+  foods: <T = FragmentableArray<Food>>(args?: {
+    where?: FoodWhereInput;
+    orderBy?: FoodOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+}
+
+export interface AggregateGroup {
+  count: Int;
+}
+
+export interface AggregateGroupPromise
+  extends Promise<AggregateGroup>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateGroupSubscription
+  extends Promise<AsyncIterator<AggregateGroup>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface UserPreviousValues {
+  id: ID_Output;
+  name: String;
+  email: String;
+  password: String;
+}
+
+export interface UserPreviousValuesPromise
+  extends Promise<UserPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  name: () => Promise<String>;
+  email: () => Promise<String>;
+  password: () => Promise<String>;
+}
+
+export interface UserPreviousValuesSubscription
+  extends Promise<AsyncIterator<UserPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  name: () => Promise<AsyncIterator<String>>;
+  email: () => Promise<AsyncIterator<String>>;
+  password: () => Promise<AsyncIterator<String>>;
+}
+
+export interface VoteSubscriptionPayload {
+  mutation: MutationType;
+  node: Vote;
+  updatedFields: String[];
+  previousValues: VotePreviousValues;
+}
+
+export interface VoteSubscriptionPayloadPromise
+  extends Promise<VoteSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = VotePromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = VotePreviousValuesPromise>() => T;
+}
+
+export interface VoteSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<VoteSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = VoteSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = VotePreviousValuesSubscription>() => T;
 }
 
 export interface Food {
@@ -1041,6 +1832,7 @@ export interface FoodPromise extends Promise<Food>, Fragmentable {
     first?: Int;
     last?: Int;
   }) => T;
+  group: <T = GroupPromise>() => T;
 }
 
 export interface FoodSubscription
@@ -1061,6 +1853,7 @@ export interface FoodSubscription
     first?: Int;
     last?: Int;
   }) => T;
+  group: <T = GroupSubscription>() => T;
 }
 
 export interface FoodNullablePromise
@@ -1081,47 +1874,167 @@ export interface FoodNullablePromise
     first?: Int;
     last?: Int;
   }) => T;
+  group: <T = GroupPromise>() => T;
 }
 
-export interface BatchPayload {
-  count: Long;
+export interface GroupConnection {
+  pageInfo: PageInfo;
+  edges: GroupEdge[];
 }
 
-export interface BatchPayloadPromise
-  extends Promise<BatchPayload>,
+export interface GroupConnectionPromise
+  extends Promise<GroupConnection>,
     Fragmentable {
-  count: () => Promise<Long>;
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<GroupEdge>>() => T;
+  aggregate: <T = AggregateGroupPromise>() => T;
 }
 
-export interface BatchPayloadSubscription
-  extends Promise<AsyncIterator<BatchPayload>>,
+export interface GroupConnectionSubscription
+  extends Promise<AsyncIterator<GroupConnection>>,
     Fragmentable {
-  count: () => Promise<AsyncIterator<Long>>;
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<GroupEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateGroupSubscription>() => T;
 }
 
-export interface UserSubscriptionPayload {
+export interface FoodSubscriptionPayload {
   mutation: MutationType;
-  node: User;
+  node: Food;
   updatedFields: String[];
-  previousValues: UserPreviousValues;
+  previousValues: FoodPreviousValues;
 }
 
-export interface UserSubscriptionPayloadPromise
-  extends Promise<UserSubscriptionPayload>,
+export interface FoodSubscriptionPayloadPromise
+  extends Promise<FoodSubscriptionPayload>,
     Fragmentable {
   mutation: () => Promise<MutationType>;
-  node: <T = UserPromise>() => T;
+  node: <T = FoodPromise>() => T;
   updatedFields: () => Promise<String[]>;
-  previousValues: <T = UserPreviousValuesPromise>() => T;
+  previousValues: <T = FoodPreviousValuesPromise>() => T;
 }
 
-export interface UserSubscriptionPayloadSubscription
-  extends Promise<AsyncIterator<UserSubscriptionPayload>>,
+export interface FoodSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<FoodSubscriptionPayload>>,
     Fragmentable {
   mutation: () => Promise<AsyncIterator<MutationType>>;
-  node: <T = UserSubscription>() => T;
+  node: <T = FoodSubscription>() => T;
   updatedFields: () => Promise<AsyncIterator<String[]>>;
-  previousValues: <T = UserPreviousValuesSubscription>() => T;
+  previousValues: <T = FoodPreviousValuesSubscription>() => T;
+}
+
+export interface FoodEdge {
+  node: Food;
+  cursor: String;
+}
+
+export interface FoodEdgePromise extends Promise<FoodEdge>, Fragmentable {
+  node: <T = FoodPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface FoodEdgeSubscription
+  extends Promise<AsyncIterator<FoodEdge>>,
+    Fragmentable {
+  node: <T = FoodSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface UserConnection {
+  pageInfo: PageInfo;
+  edges: UserEdge[];
+}
+
+export interface UserConnectionPromise
+  extends Promise<UserConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<UserEdge>>() => T;
+  aggregate: <T = AggregateUserPromise>() => T;
+}
+
+export interface UserConnectionSubscription
+  extends Promise<AsyncIterator<UserConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<UserEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateUserSubscription>() => T;
+}
+
+export interface GroupPreviousValues {
+  id: ID_Output;
+  name: String;
+  createdAt: DateTimeOutput;
+  isPrivate: Boolean;
+}
+
+export interface GroupPreviousValuesPromise
+  extends Promise<GroupPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  name: () => Promise<String>;
+  createdAt: () => Promise<DateTimeOutput>;
+  isPrivate: () => Promise<Boolean>;
+}
+
+export interface GroupPreviousValuesSubscription
+  extends Promise<AsyncIterator<GroupPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  name: () => Promise<AsyncIterator<String>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  isPrivate: () => Promise<AsyncIterator<Boolean>>;
+}
+
+export interface GroupSubscriptionPayload {
+  mutation: MutationType;
+  node: Group;
+  updatedFields: String[];
+  previousValues: GroupPreviousValues;
+}
+
+export interface GroupSubscriptionPayloadPromise
+  extends Promise<GroupSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = GroupPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = GroupPreviousValuesPromise>() => T;
+}
+
+export interface GroupSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<GroupSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = GroupSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = GroupPreviousValuesSubscription>() => T;
+}
+
+export interface Vote {
+  id: ID_Output;
+}
+
+export interface VotePromise extends Promise<Vote>, Fragmentable {
+  id: () => Promise<ID_Output>;
+  food: <T = FoodPromise>() => T;
+  user: <T = UserPromise>() => T;
+}
+
+export interface VoteSubscription
+  extends Promise<AsyncIterator<Vote>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  food: <T = FoodSubscription>() => T;
+  user: <T = UserSubscription>() => T;
+}
+
+export interface VoteNullablePromise
+  extends Promise<Vote | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  food: <T = FoodPromise>() => T;
+  user: <T = UserPromise>() => T;
 }
 
 export interface FoodPreviousValues {
@@ -1152,66 +2065,20 @@ export interface FoodPreviousValuesSubscription
   inCart: () => Promise<AsyncIterator<Boolean>>;
 }
 
-export interface AggregateFood {
-  count: Int;
+export interface BatchPayload {
+  count: Long;
 }
 
-export interface AggregateFoodPromise
-  extends Promise<AggregateFood>,
+export interface BatchPayloadPromise
+  extends Promise<BatchPayload>,
     Fragmentable {
-  count: () => Promise<Int>;
+  count: () => Promise<Long>;
 }
 
-export interface AggregateFoodSubscription
-  extends Promise<AsyncIterator<AggregateFood>>,
+export interface BatchPayloadSubscription
+  extends Promise<AsyncIterator<BatchPayload>>,
     Fragmentable {
-  count: () => Promise<AsyncIterator<Int>>;
-}
-
-export interface UserPreviousValues {
-  id: ID_Output;
-  name: String;
-  email: String;
-  password: String;
-}
-
-export interface UserPreviousValuesPromise
-  extends Promise<UserPreviousValues>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  name: () => Promise<String>;
-  email: () => Promise<String>;
-  password: () => Promise<String>;
-}
-
-export interface UserPreviousValuesSubscription
-  extends Promise<AsyncIterator<UserPreviousValues>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  name: () => Promise<AsyncIterator<String>>;
-  email: () => Promise<AsyncIterator<String>>;
-  password: () => Promise<AsyncIterator<String>>;
-}
-
-export interface UserConnection {
-  pageInfo: PageInfo;
-  edges: UserEdge[];
-}
-
-export interface UserConnectionPromise
-  extends Promise<UserConnection>,
-    Fragmentable {
-  pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<UserEdge>>() => T;
-  aggregate: <T = AggregateUserPromise>() => T;
-}
-
-export interface UserConnectionSubscription
-  extends Promise<AsyncIterator<UserConnection>>,
-    Fragmentable {
-  pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<UserEdgeSubscription>>>() => T;
-  aggregate: <T = AggregateUserSubscription>() => T;
+  count: () => Promise<AsyncIterator<Long>>;
 }
 
 export interface AggregateUser {
@@ -1230,77 +2097,38 @@ export interface AggregateUserSubscription
   count: () => Promise<AsyncIterator<Int>>;
 }
 
-export interface VoteEdge {
-  node: Vote;
+export interface AggregateFood {
+  count: Int;
+}
+
+export interface AggregateFoodPromise
+  extends Promise<AggregateFood>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateFoodSubscription
+  extends Promise<AsyncIterator<AggregateFood>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface GroupEdge {
+  node: Group;
   cursor: String;
 }
 
-export interface VoteEdgePromise extends Promise<VoteEdge>, Fragmentable {
-  node: <T = VotePromise>() => T;
+export interface GroupEdgePromise extends Promise<GroupEdge>, Fragmentable {
+  node: <T = GroupPromise>() => T;
   cursor: () => Promise<String>;
 }
 
-export interface VoteEdgeSubscription
-  extends Promise<AsyncIterator<VoteEdge>>,
+export interface GroupEdgeSubscription
+  extends Promise<AsyncIterator<GroupEdge>>,
     Fragmentable {
-  node: <T = VoteSubscription>() => T;
+  node: <T = GroupSubscription>() => T;
   cursor: () => Promise<AsyncIterator<String>>;
 }
-
-export interface VoteSubscriptionPayload {
-  mutation: MutationType;
-  node: Vote;
-  updatedFields: String[];
-  previousValues: VotePreviousValues;
-}
-
-export interface VoteSubscriptionPayloadPromise
-  extends Promise<VoteSubscriptionPayload>,
-    Fragmentable {
-  mutation: () => Promise<MutationType>;
-  node: <T = VotePromise>() => T;
-  updatedFields: () => Promise<String[]>;
-  previousValues: <T = VotePreviousValuesPromise>() => T;
-}
-
-export interface VoteSubscriptionPayloadSubscription
-  extends Promise<AsyncIterator<VoteSubscriptionPayload>>,
-    Fragmentable {
-  mutation: () => Promise<AsyncIterator<MutationType>>;
-  node: <T = VoteSubscription>() => T;
-  updatedFields: () => Promise<AsyncIterator<String[]>>;
-  previousValues: <T = VotePreviousValuesSubscription>() => T;
-}
-
-export interface FoodSubscriptionPayload {
-  mutation: MutationType;
-  node: Food;
-  updatedFields: String[];
-  previousValues: FoodPreviousValues;
-}
-
-export interface FoodSubscriptionPayloadPromise
-  extends Promise<FoodSubscriptionPayload>,
-    Fragmentable {
-  mutation: () => Promise<MutationType>;
-  node: <T = FoodPromise>() => T;
-  updatedFields: () => Promise<String[]>;
-  previousValues: <T = FoodPreviousValuesPromise>() => T;
-}
-
-export interface FoodSubscriptionPayloadSubscription
-  extends Promise<AsyncIterator<FoodSubscriptionPayload>>,
-    Fragmentable {
-  mutation: () => Promise<AsyncIterator<MutationType>>;
-  node: <T = FoodSubscription>() => T;
-  updatedFields: () => Promise<AsyncIterator<String[]>>;
-  previousValues: <T = FoodPreviousValuesSubscription>() => T;
-}
-
-/*
-The `Boolean` scalar type represents `true` or `false`.
-*/
-export type Boolean = boolean;
 
 /*
 DateTime scalar input type, allowing Date
@@ -1318,17 +2146,22 @@ The `ID` scalar type represents a unique identifier, often used to refetch an ob
 export type ID_Input = string | number;
 export type ID_Output = string;
 
-/*
-The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1.
-*/
-export type Int = number;
-
 export type Long = string;
+
+/*
+The `Boolean` scalar type represents `true` or `false`.
+*/
+export type Boolean = boolean;
 
 /*
 The `String` scalar type represents textual data, represented as UTF-8 character sequences. The String type is most often used by GraphQL to represent free-form human-readable text.
 */
 export type String = string;
+
+/*
+The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1.
+*/
+export type Int = number;
 
 /**
  * Model Metadata
@@ -1345,6 +2178,10 @@ export const models: Model[] = [
   },
   {
     name: "Vote",
+    embedded: false
+  },
+  {
+    name: "Group",
     embedded: false
   }
 ];

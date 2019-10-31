@@ -59,9 +59,21 @@ async function vote(parent, args, context, info){
     });
 }
 
+async function createGroup(parent, args, context, info) {
+    const userId = getUserId(context);
+    return context.prisma.createGroup({
+        name: args.name,
+        createdBy: { connect: { id: userId } },
+        members: null,
+        isPrivate: args.isPrivate,
+        foods: null
+    });
+}
+
 module.exports = {
     signup,
     post,
     vote,
-    login
+    login,
+    createGroup
 }
