@@ -9,7 +9,7 @@ type Mutation {
     post(name: String!, quantity: Int!, inCart: Boolean!): Food!
     updateFood(id: ID!, name: String!, quantity: Int!, inCart: Boolean!): Food
     deleteFood(id: ID!): Food
-
+    
     signup(email: String!, password: String!, name: String!): AuthPayload
     login(email: String!, password: String!): AuthPayload
 

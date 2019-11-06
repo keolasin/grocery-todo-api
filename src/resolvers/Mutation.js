@@ -42,6 +42,25 @@ function post(parent, args, context, info){
     });
 }
 
+async function updateFood(parent, args, context, info){
+    return context.prisma.updateFood({
+        data: {
+            name: args.name,
+            quantity: args.quantity,
+            inCart: args.inCart
+        },
+        where: {
+            id: args.id
+        }
+    });
+}
+
+async function deleteFood(parent, args, context, info){
+    return context.prisma.deleteFood({
+        id: args.id
+    })
+}
+
 async function vote(parent, args, context, info){
     const userId = getUserId(context);
     const foodExists = await context.prisma.$exists.vote({
@@ -75,5 +94,7 @@ module.exports = {
     post,
     vote,
     login,
-    createGroup
+    createGroup,
+    updateFood,
+    deleteFood
 }
