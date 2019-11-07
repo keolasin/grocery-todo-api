@@ -7,6 +7,10 @@ module.exports = {
   count: Int!
 }
 
+type AggregateGroup {
+  count: Int!
+}
+
 type AggregateUser {
   count: Int!
 }
@@ -29,6 +33,7 @@ type Food {
   inCart: Boolean!
   postedBy: User
   votes(where: VoteWhereInput, orderBy: VoteOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Vote!]
+  group: Group
 }
 
 type FoodConnection {
@@ -44,6 +49,12 @@ input FoodCreateInput {
   inCart: Boolean!
   postedBy: UserCreateOneWithoutFoodsInput
   votes: VoteCreateManyWithoutFoodInput
+  group: GroupCreateOneWithoutFoodsInput
+}
+
+input FoodCreateManyWithoutGroupInput {
+  create: [FoodCreateWithoutGroupInput!]
+  connect: [FoodWhereUniqueInput!]
 }
 
 input FoodCreateManyWithoutPostedByInput {
@@ -56,12 +67,22 @@ input FoodCreateOneWithoutVotesInput {
   connect: FoodWhereUniqueInput
 }
 
+input FoodCreateWithoutGroupInput {
+  id: ID
+  name: String!
+  quantity: Int!
+  inCart: Boolean!
+  postedBy: UserCreateOneWithoutFoodsInput
+  votes: VoteCreateManyWithoutFoodInput
+}
+
 input FoodCreateWithoutPostedByInput {
   id: ID
   name: String!
   quantity: Int!
   inCart: Boolean!
   votes: VoteCreateManyWithoutFoodInput
+  group: GroupCreateOneWithoutFoodsInput
 }
 
 input FoodCreateWithoutVotesInput {
@@ -70,6 +91,7 @@ input FoodCreateWithoutVotesInput {
   quantity: Int!
   inCart: Boolean!
   postedBy: UserCreateOneWithoutFoodsInput
+  group: GroupCreateOneWithoutFoodsInput
 }
 
 type FoodEdge {
@@ -174,6 +196,7 @@ input FoodUpdateInput {
   inCart: Boolean
   postedBy: UserUpdateOneWithoutFoodsInput
   votes: VoteUpdateManyWithoutFoodInput
+  group: GroupUpdateOneWithoutFoodsInput
 }
 
 input FoodUpdateManyDataInput {
@@ -186,6 +209,18 @@ input FoodUpdateManyMutationInput {
   name: String
   quantity: Int
   inCart: Boolean
+}
+
+input FoodUpdateManyWithoutGroupInput {
+  create: [FoodCreateWithoutGroupInput!]
+  delete: [FoodWhereUniqueInput!]
+  connect: [FoodWhereUniqueInput!]
+  set: [FoodWhereUniqueInput!]
+  disconnect: [FoodWhereUniqueInput!]
+  update: [FoodUpdateWithWhereUniqueWithoutGroupInput!]
+  upsert: [FoodUpsertWithWhereUniqueWithoutGroupInput!]
+  deleteMany: [FoodScalarWhereInput!]
+  updateMany: [FoodUpdateManyWithWhereNestedInput!]
 }
 
 input FoodUpdateManyWithoutPostedByInput {
@@ -212,11 +247,20 @@ input FoodUpdateOneRequiredWithoutVotesInput {
   connect: FoodWhereUniqueInput
 }
 
+input FoodUpdateWithoutGroupDataInput {
+  name: String
+  quantity: Int
+  inCart: Boolean
+  postedBy: UserUpdateOneWithoutFoodsInput
+  votes: VoteUpdateManyWithoutFoodInput
+}
+
 input FoodUpdateWithoutPostedByDataInput {
   name: String
   quantity: Int
   inCart: Boolean
   votes: VoteUpdateManyWithoutFoodInput
+  group: GroupUpdateOneWithoutFoodsInput
 }
 
 input FoodUpdateWithoutVotesDataInput {
@@ -224,6 +268,12 @@ input FoodUpdateWithoutVotesDataInput {
   quantity: Int
   inCart: Boolean
   postedBy: UserUpdateOneWithoutFoodsInput
+  group: GroupUpdateOneWithoutFoodsInput
+}
+
+input FoodUpdateWithWhereUniqueWithoutGroupInput {
+  where: FoodWhereUniqueInput!
+  data: FoodUpdateWithoutGroupDataInput!
 }
 
 input FoodUpdateWithWhereUniqueWithoutPostedByInput {
@@ -234,6 +284,12 @@ input FoodUpdateWithWhereUniqueWithoutPostedByInput {
 input FoodUpsertWithoutVotesInput {
   update: FoodUpdateWithoutVotesDataInput!
   create: FoodCreateWithoutVotesInput!
+}
+
+input FoodUpsertWithWhereUniqueWithoutGroupInput {
+  where: FoodWhereUniqueInput!
+  update: FoodUpdateWithoutGroupDataInput!
+  create: FoodCreateWithoutGroupInput!
 }
 
 input FoodUpsertWithWhereUniqueWithoutPostedByInput {
@@ -293,12 +349,321 @@ input FoodWhereInput {
   votes_every: VoteWhereInput
   votes_some: VoteWhereInput
   votes_none: VoteWhereInput
+  group: GroupWhereInput
   AND: [FoodWhereInput!]
   OR: [FoodWhereInput!]
   NOT: [FoodWhereInput!]
 }
 
 input FoodWhereUniqueInput {
+  id: ID
+}
+
+type Group {
+  id: ID!
+  name: String!
+  createdAt: DateTime!
+  createdBy: User!
+  members(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User!]
+  isPrivate: Boolean!
+  foods(where: FoodWhereInput, orderBy: FoodOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Food!]
+}
+
+type GroupConnection {
+  pageInfo: PageInfo!
+  edges: [GroupEdge]!
+  aggregate: AggregateGroup!
+}
+
+input GroupCreateInput {
+  id: ID
+  name: String!
+  createdBy: UserCreateOneWithoutCreatedGroupsInput!
+  members: UserCreateManyWithoutMemberOfGroupsInput
+  isPrivate: Boolean!
+  foods: FoodCreateManyWithoutGroupInput
+}
+
+input GroupCreateManyWithoutCreatedByInput {
+  create: [GroupCreateWithoutCreatedByInput!]
+  connect: [GroupWhereUniqueInput!]
+}
+
+input GroupCreateManyWithoutMembersInput {
+  create: [GroupCreateWithoutMembersInput!]
+  connect: [GroupWhereUniqueInput!]
+}
+
+input GroupCreateOneWithoutFoodsInput {
+  create: GroupCreateWithoutFoodsInput
+  connect: GroupWhereUniqueInput
+}
+
+input GroupCreateWithoutCreatedByInput {
+  id: ID
+  name: String!
+  members: UserCreateManyWithoutMemberOfGroupsInput
+  isPrivate: Boolean!
+  foods: FoodCreateManyWithoutGroupInput
+}
+
+input GroupCreateWithoutFoodsInput {
+  id: ID
+  name: String!
+  createdBy: UserCreateOneWithoutCreatedGroupsInput!
+  members: UserCreateManyWithoutMemberOfGroupsInput
+  isPrivate: Boolean!
+}
+
+input GroupCreateWithoutMembersInput {
+  id: ID
+  name: String!
+  createdBy: UserCreateOneWithoutCreatedGroupsInput!
+  isPrivate: Boolean!
+  foods: FoodCreateManyWithoutGroupInput
+}
+
+type GroupEdge {
+  node: Group!
+  cursor: String!
+}
+
+enum GroupOrderByInput {
+  id_ASC
+  id_DESC
+  name_ASC
+  name_DESC
+  createdAt_ASC
+  createdAt_DESC
+  isPrivate_ASC
+  isPrivate_DESC
+}
+
+type GroupPreviousValues {
+  id: ID!
+  name: String!
+  createdAt: DateTime!
+  isPrivate: Boolean!
+}
+
+input GroupScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  name: String
+  name_not: String
+  name_in: [String!]
+  name_not_in: [String!]
+  name_lt: String
+  name_lte: String
+  name_gt: String
+  name_gte: String
+  name_contains: String
+  name_not_contains: String
+  name_starts_with: String
+  name_not_starts_with: String
+  name_ends_with: String
+  name_not_ends_with: String
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  isPrivate: Boolean
+  isPrivate_not: Boolean
+  AND: [GroupScalarWhereInput!]
+  OR: [GroupScalarWhereInput!]
+  NOT: [GroupScalarWhereInput!]
+}
+
+type GroupSubscriptionPayload {
+  mutation: MutationType!
+  node: Group
+  updatedFields: [String!]
+  previousValues: GroupPreviousValues
+}
+
+input GroupSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: GroupWhereInput
+  AND: [GroupSubscriptionWhereInput!]
+  OR: [GroupSubscriptionWhereInput!]
+  NOT: [GroupSubscriptionWhereInput!]
+}
+
+input GroupUpdateInput {
+  name: String
+  createdBy: UserUpdateOneRequiredWithoutCreatedGroupsInput
+  members: UserUpdateManyWithoutMemberOfGroupsInput
+  isPrivate: Boolean
+  foods: FoodUpdateManyWithoutGroupInput
+}
+
+input GroupUpdateManyDataInput {
+  name: String
+  isPrivate: Boolean
+}
+
+input GroupUpdateManyMutationInput {
+  name: String
+  isPrivate: Boolean
+}
+
+input GroupUpdateManyWithoutCreatedByInput {
+  create: [GroupCreateWithoutCreatedByInput!]
+  delete: [GroupWhereUniqueInput!]
+  connect: [GroupWhereUniqueInput!]
+  set: [GroupWhereUniqueInput!]
+  disconnect: [GroupWhereUniqueInput!]
+  update: [GroupUpdateWithWhereUniqueWithoutCreatedByInput!]
+  upsert: [GroupUpsertWithWhereUniqueWithoutCreatedByInput!]
+  deleteMany: [GroupScalarWhereInput!]
+  updateMany: [GroupUpdateManyWithWhereNestedInput!]
+}
+
+input GroupUpdateManyWithoutMembersInput {
+  create: [GroupCreateWithoutMembersInput!]
+  delete: [GroupWhereUniqueInput!]
+  connect: [GroupWhereUniqueInput!]
+  set: [GroupWhereUniqueInput!]
+  disconnect: [GroupWhereUniqueInput!]
+  update: [GroupUpdateWithWhereUniqueWithoutMembersInput!]
+  upsert: [GroupUpsertWithWhereUniqueWithoutMembersInput!]
+  deleteMany: [GroupScalarWhereInput!]
+  updateMany: [GroupUpdateManyWithWhereNestedInput!]
+}
+
+input GroupUpdateManyWithWhereNestedInput {
+  where: GroupScalarWhereInput!
+  data: GroupUpdateManyDataInput!
+}
+
+input GroupUpdateOneWithoutFoodsInput {
+  create: GroupCreateWithoutFoodsInput
+  update: GroupUpdateWithoutFoodsDataInput
+  upsert: GroupUpsertWithoutFoodsInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: GroupWhereUniqueInput
+}
+
+input GroupUpdateWithoutCreatedByDataInput {
+  name: String
+  members: UserUpdateManyWithoutMemberOfGroupsInput
+  isPrivate: Boolean
+  foods: FoodUpdateManyWithoutGroupInput
+}
+
+input GroupUpdateWithoutFoodsDataInput {
+  name: String
+  createdBy: UserUpdateOneRequiredWithoutCreatedGroupsInput
+  members: UserUpdateManyWithoutMemberOfGroupsInput
+  isPrivate: Boolean
+}
+
+input GroupUpdateWithoutMembersDataInput {
+  name: String
+  createdBy: UserUpdateOneRequiredWithoutCreatedGroupsInput
+  isPrivate: Boolean
+  foods: FoodUpdateManyWithoutGroupInput
+}
+
+input GroupUpdateWithWhereUniqueWithoutCreatedByInput {
+  where: GroupWhereUniqueInput!
+  data: GroupUpdateWithoutCreatedByDataInput!
+}
+
+input GroupUpdateWithWhereUniqueWithoutMembersInput {
+  where: GroupWhereUniqueInput!
+  data: GroupUpdateWithoutMembersDataInput!
+}
+
+input GroupUpsertWithoutFoodsInput {
+  update: GroupUpdateWithoutFoodsDataInput!
+  create: GroupCreateWithoutFoodsInput!
+}
+
+input GroupUpsertWithWhereUniqueWithoutCreatedByInput {
+  where: GroupWhereUniqueInput!
+  update: GroupUpdateWithoutCreatedByDataInput!
+  create: GroupCreateWithoutCreatedByInput!
+}
+
+input GroupUpsertWithWhereUniqueWithoutMembersInput {
+  where: GroupWhereUniqueInput!
+  update: GroupUpdateWithoutMembersDataInput!
+  create: GroupCreateWithoutMembersInput!
+}
+
+input GroupWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  name: String
+  name_not: String
+  name_in: [String!]
+  name_not_in: [String!]
+  name_lt: String
+  name_lte: String
+  name_gt: String
+  name_gte: String
+  name_contains: String
+  name_not_contains: String
+  name_starts_with: String
+  name_not_starts_with: String
+  name_ends_with: String
+  name_not_ends_with: String
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  createdBy: UserWhereInput
+  members_every: UserWhereInput
+  members_some: UserWhereInput
+  members_none: UserWhereInput
+  isPrivate: Boolean
+  isPrivate_not: Boolean
+  foods_every: FoodWhereInput
+  foods_some: FoodWhereInput
+  foods_none: FoodWhereInput
+  AND: [GroupWhereInput!]
+  OR: [GroupWhereInput!]
+  NOT: [GroupWhereInput!]
+}
+
+input GroupWhereUniqueInput {
   id: ID
 }
 
@@ -311,6 +676,12 @@ type Mutation {
   upsertFood(where: FoodWhereUniqueInput!, create: FoodCreateInput!, update: FoodUpdateInput!): Food!
   deleteFood(where: FoodWhereUniqueInput!): Food
   deleteManyFoods(where: FoodWhereInput): BatchPayload!
+  createGroup(data: GroupCreateInput!): Group!
+  updateGroup(data: GroupUpdateInput!, where: GroupWhereUniqueInput!): Group
+  updateManyGroups(data: GroupUpdateManyMutationInput!, where: GroupWhereInput): BatchPayload!
+  upsertGroup(where: GroupWhereUniqueInput!, create: GroupCreateInput!, update: GroupUpdateInput!): Group!
+  deleteGroup(where: GroupWhereUniqueInput!): Group
+  deleteManyGroups(where: GroupWhereInput): BatchPayload!
   createUser(data: UserCreateInput!): User!
   updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
   updateManyUsers(data: UserUpdateManyMutationInput!, where: UserWhereInput): BatchPayload!
@@ -345,6 +716,9 @@ type Query {
   food(where: FoodWhereUniqueInput!): Food
   foods(where: FoodWhereInput, orderBy: FoodOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Food]!
   foodsConnection(where: FoodWhereInput, orderBy: FoodOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): FoodConnection!
+  group(where: GroupWhereUniqueInput!): Group
+  groups(where: GroupWhereInput, orderBy: GroupOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Group]!
+  groupsConnection(where: GroupWhereInput, orderBy: GroupOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): GroupConnection!
   user(where: UserWhereUniqueInput!): User
   users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
   usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
@@ -356,6 +730,7 @@ type Query {
 
 type Subscription {
   food(where: FoodSubscriptionWhereInput): FoodSubscriptionPayload
+  group(where: GroupSubscriptionWhereInput): GroupSubscriptionPayload
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
   vote(where: VoteSubscriptionWhereInput): VoteSubscriptionPayload
 }
@@ -367,6 +742,8 @@ type User {
   password: String!
   foods(where: FoodWhereInput, orderBy: FoodOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Food!]
   votes(where: VoteWhereInput, orderBy: VoteOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Vote!]
+  createdGroups(where: GroupWhereInput, orderBy: GroupOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Group!]
+  memberOfGroups(where: GroupWhereInput, orderBy: GroupOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Group!]
 }
 
 type UserConnection {
@@ -382,6 +759,18 @@ input UserCreateInput {
   password: String!
   foods: FoodCreateManyWithoutPostedByInput
   votes: VoteCreateManyWithoutUserInput
+  createdGroups: GroupCreateManyWithoutCreatedByInput
+  memberOfGroups: GroupCreateManyWithoutMembersInput
+}
+
+input UserCreateManyWithoutMemberOfGroupsInput {
+  create: [UserCreateWithoutMemberOfGroupsInput!]
+  connect: [UserWhereUniqueInput!]
+}
+
+input UserCreateOneWithoutCreatedGroupsInput {
+  create: UserCreateWithoutCreatedGroupsInput
+  connect: UserWhereUniqueInput
 }
 
 input UserCreateOneWithoutFoodsInput {
@@ -394,12 +783,34 @@ input UserCreateOneWithoutVotesInput {
   connect: UserWhereUniqueInput
 }
 
+input UserCreateWithoutCreatedGroupsInput {
+  id: ID
+  name: String!
+  email: String!
+  password: String!
+  foods: FoodCreateManyWithoutPostedByInput
+  votes: VoteCreateManyWithoutUserInput
+  memberOfGroups: GroupCreateManyWithoutMembersInput
+}
+
 input UserCreateWithoutFoodsInput {
   id: ID
   name: String!
   email: String!
   password: String!
   votes: VoteCreateManyWithoutUserInput
+  createdGroups: GroupCreateManyWithoutCreatedByInput
+  memberOfGroups: GroupCreateManyWithoutMembersInput
+}
+
+input UserCreateWithoutMemberOfGroupsInput {
+  id: ID
+  name: String!
+  email: String!
+  password: String!
+  foods: FoodCreateManyWithoutPostedByInput
+  votes: VoteCreateManyWithoutUserInput
+  createdGroups: GroupCreateManyWithoutCreatedByInput
 }
 
 input UserCreateWithoutVotesInput {
@@ -408,6 +819,8 @@ input UserCreateWithoutVotesInput {
   email: String!
   password: String!
   foods: FoodCreateManyWithoutPostedByInput
+  createdGroups: GroupCreateManyWithoutCreatedByInput
+  memberOfGroups: GroupCreateManyWithoutMembersInput
 }
 
 type UserEdge {
@@ -431,6 +844,68 @@ type UserPreviousValues {
   name: String!
   email: String!
   password: String!
+}
+
+input UserScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  name: String
+  name_not: String
+  name_in: [String!]
+  name_not_in: [String!]
+  name_lt: String
+  name_lte: String
+  name_gt: String
+  name_gte: String
+  name_contains: String
+  name_not_contains: String
+  name_starts_with: String
+  name_not_starts_with: String
+  name_ends_with: String
+  name_not_ends_with: String
+  email: String
+  email_not: String
+  email_in: [String!]
+  email_not_in: [String!]
+  email_lt: String
+  email_lte: String
+  email_gt: String
+  email_gte: String
+  email_contains: String
+  email_not_contains: String
+  email_starts_with: String
+  email_not_starts_with: String
+  email_ends_with: String
+  email_not_ends_with: String
+  password: String
+  password_not: String
+  password_in: [String!]
+  password_not_in: [String!]
+  password_lt: String
+  password_lte: String
+  password_gt: String
+  password_gte: String
+  password_contains: String
+  password_not_contains: String
+  password_starts_with: String
+  password_not_starts_with: String
+  password_ends_with: String
+  password_not_ends_with: String
+  AND: [UserScalarWhereInput!]
+  OR: [UserScalarWhereInput!]
+  NOT: [UserScalarWhereInput!]
 }
 
 type UserSubscriptionPayload {
@@ -457,12 +932,44 @@ input UserUpdateInput {
   password: String
   foods: FoodUpdateManyWithoutPostedByInput
   votes: VoteUpdateManyWithoutUserInput
+  createdGroups: GroupUpdateManyWithoutCreatedByInput
+  memberOfGroups: GroupUpdateManyWithoutMembersInput
+}
+
+input UserUpdateManyDataInput {
+  name: String
+  email: String
+  password: String
 }
 
 input UserUpdateManyMutationInput {
   name: String
   email: String
   password: String
+}
+
+input UserUpdateManyWithoutMemberOfGroupsInput {
+  create: [UserCreateWithoutMemberOfGroupsInput!]
+  delete: [UserWhereUniqueInput!]
+  connect: [UserWhereUniqueInput!]
+  set: [UserWhereUniqueInput!]
+  disconnect: [UserWhereUniqueInput!]
+  update: [UserUpdateWithWhereUniqueWithoutMemberOfGroupsInput!]
+  upsert: [UserUpsertWithWhereUniqueWithoutMemberOfGroupsInput!]
+  deleteMany: [UserScalarWhereInput!]
+  updateMany: [UserUpdateManyWithWhereNestedInput!]
+}
+
+input UserUpdateManyWithWhereNestedInput {
+  where: UserScalarWhereInput!
+  data: UserUpdateManyDataInput!
+}
+
+input UserUpdateOneRequiredWithoutCreatedGroupsInput {
+  create: UserCreateWithoutCreatedGroupsInput
+  update: UserUpdateWithoutCreatedGroupsDataInput
+  upsert: UserUpsertWithoutCreatedGroupsInput
+  connect: UserWhereUniqueInput
 }
 
 input UserUpdateOneRequiredWithoutVotesInput {
@@ -481,11 +988,31 @@ input UserUpdateOneWithoutFoodsInput {
   connect: UserWhereUniqueInput
 }
 
+input UserUpdateWithoutCreatedGroupsDataInput {
+  name: String
+  email: String
+  password: String
+  foods: FoodUpdateManyWithoutPostedByInput
+  votes: VoteUpdateManyWithoutUserInput
+  memberOfGroups: GroupUpdateManyWithoutMembersInput
+}
+
 input UserUpdateWithoutFoodsDataInput {
   name: String
   email: String
   password: String
   votes: VoteUpdateManyWithoutUserInput
+  createdGroups: GroupUpdateManyWithoutCreatedByInput
+  memberOfGroups: GroupUpdateManyWithoutMembersInput
+}
+
+input UserUpdateWithoutMemberOfGroupsDataInput {
+  name: String
+  email: String
+  password: String
+  foods: FoodUpdateManyWithoutPostedByInput
+  votes: VoteUpdateManyWithoutUserInput
+  createdGroups: GroupUpdateManyWithoutCreatedByInput
 }
 
 input UserUpdateWithoutVotesDataInput {
@@ -493,6 +1020,18 @@ input UserUpdateWithoutVotesDataInput {
   email: String
   password: String
   foods: FoodUpdateManyWithoutPostedByInput
+  createdGroups: GroupUpdateManyWithoutCreatedByInput
+  memberOfGroups: GroupUpdateManyWithoutMembersInput
+}
+
+input UserUpdateWithWhereUniqueWithoutMemberOfGroupsInput {
+  where: UserWhereUniqueInput!
+  data: UserUpdateWithoutMemberOfGroupsDataInput!
+}
+
+input UserUpsertWithoutCreatedGroupsInput {
+  update: UserUpdateWithoutCreatedGroupsDataInput!
+  create: UserCreateWithoutCreatedGroupsInput!
 }
 
 input UserUpsertWithoutFoodsInput {
@@ -503,6 +1042,12 @@ input UserUpsertWithoutFoodsInput {
 input UserUpsertWithoutVotesInput {
   update: UserUpdateWithoutVotesDataInput!
   create: UserCreateWithoutVotesInput!
+}
+
+input UserUpsertWithWhereUniqueWithoutMemberOfGroupsInput {
+  where: UserWhereUniqueInput!
+  update: UserUpdateWithoutMemberOfGroupsDataInput!
+  create: UserCreateWithoutMemberOfGroupsInput!
 }
 
 input UserWhereInput {
@@ -568,6 +1113,12 @@ input UserWhereInput {
   votes_every: VoteWhereInput
   votes_some: VoteWhereInput
   votes_none: VoteWhereInput
+  createdGroups_every: GroupWhereInput
+  createdGroups_some: GroupWhereInput
+  createdGroups_none: GroupWhereInput
+  memberOfGroups_every: GroupWhereInput
+  memberOfGroups_some: GroupWhereInput
+  memberOfGroups_none: GroupWhereInput
   AND: [UserWhereInput!]
   OR: [UserWhereInput!]
   NOT: [UserWhereInput!]

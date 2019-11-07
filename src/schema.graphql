@@ -2,25 +2,22 @@ type Query {
     info: String!
     feed(filter: String, skip: Int, first: Int): [Food!]!
     food(id: ID!): Food
+    groupList(filter: String, skip: Int, first: Int): [Group!]
 }
 
 type Mutation {
     post(name: String!, quantity: Int!, inCart: Boolean!): Food!
     updateFood(id: ID!, name: String!, quantity: Int!, inCart: Boolean!): Food
     deleteFood(id: ID!): Food
-
+    
     signup(email: String!, password: String!, name: String!): AuthPayload
     login(email: String!, password: String!): AuthPayload
-    vote(foodId: ID!): Vote
-}
 
-type Food {
-    id: ID!
-    name: String!
-    quantity: Int!
-    inCart: Boolean!
-    postedBy: User
-    votes: [Vote!]!
+    vote(foodId: ID!): Vote
+
+    createGroup(name: String!, isPrivate: Boolean!): Group!
+    updateGroup(id: ID!, name: String!, isPrivate: Boolean!): Group
+    deleteGroup(id: ID!): Group
 }
 
 type AuthPayload {
@@ -33,11 +30,34 @@ type User {
     name: String!
     email: String!
     foods: [Food!]!
+    votes: [Vote!]!
+    createdGroups: [Group!]
+    memberOfGroups: [Group!]
+}
+
+type Group {
+    id: ID!
+    name: String!
+    createdBy: User!
+    members: [User!]!
+    isPrivate: Boolean!
+    foods: [Food]
 }
 
 type Subscription {
     newFood: Food
     newVote: Vote
+}
+
+
+type Food {
+    id: ID!
+    name: String!
+    quantity: Int!
+    inCart: Boolean!
+    postedBy: User
+    votes: [Vote!]!
+    group: Group
 }
 
 type Vote {
