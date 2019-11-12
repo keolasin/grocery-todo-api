@@ -1,8 +1,8 @@
 type Query {
     info: String!
-    feed(filter: String, skip: Int, first: Int): [Food!]!
+    feed(filter: String, skip: Int, first: Int, orderBy: FoodOrderByInput): [Food!]!
     food(id: ID!): Food
-    groupList(filter: String, skip: Int, first: Int): [Group!]
+    groupList(filter: String, skip: Int, first: Int orderBy: GroupOrderByInput): [Group!]
 }
 
 type Mutation {
@@ -76,4 +76,17 @@ enum FoodOrderByInput {
     quantity_DESC
     postedBy_ASC
     postedBy_DESC
+    createdAt_ASC
+    createdAt_DESC
+}
+
+enum GroupOrderByInput {
+    name_ASC
+    name_DESC
+    createdBy_ASC
+    createdBy_DESC
+    createdAt_ASC
+    createdAt_DESC
+    isPrivate_ASC
+    isPrivate_DESC
 }
