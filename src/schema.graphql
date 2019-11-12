@@ -6,7 +6,7 @@ type Query {
 }
 
 type Mutation {
-    post(name: String!, quantity: Int!, inCart: Boolean!): Food!
+    createFood(name: String!, quantity: Int!, inCart: Boolean!, groupId: ID!): Food!
     updateFood(id: ID!, name: String!, quantity: Int!, inCart: Boolean!): Food
     deleteFood(id: ID!): Food
     
@@ -47,6 +47,7 @@ type Group {
 type Subscription {
     newFood: Food
     newVote: Vote
+    newGroup: Group
 }
 
 

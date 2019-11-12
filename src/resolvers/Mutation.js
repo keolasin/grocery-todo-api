@@ -32,13 +32,14 @@ async function login(parent, args, context, info){
     }
 }
 
-function post(parent, args, context, info){
+function createFood(parent, args, context, info){
     const userId = getUserId(context);
     return context.prisma.createFood({
         name: args.name,
         quantity: args.quantity,
         inCart: args.inCart,
-        postedBy: { connect: { id: userId } }
+        postedBy: { connect: { id: userId } },
+        group: { connect: { id: args.groupId } },
     });
 }
 
@@ -91,7 +92,7 @@ async function createGroup(parent, args, context, info) {
 
 module.exports = {
     signup,
-    post,
+    createFood,
     vote,
     login,
     createGroup,
