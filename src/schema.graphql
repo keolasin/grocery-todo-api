@@ -66,3 +66,14 @@ type Vote {
     food: Food!
     user: User!
 }
+
+enum FoodOrderByInput {
+    name_ASC
+    name_DESC
+    inCart_ASC
+    inCart_DESC
+    quantity_ASC
+    quantity_DESC
+    postedBy_ASC
+    postedBy_DESC
+}
