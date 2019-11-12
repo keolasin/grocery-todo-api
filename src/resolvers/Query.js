@@ -11,7 +11,8 @@ async function feed(parent, args, context, info){
     const foods = await context.prisma.foods({
         where,
         skip: args.skip,
-        first: args.first
+        first: args.first,
+        orderBy: args.orderBy
     });
     return foods;
 }
@@ -20,7 +21,8 @@ async function groupList(parent, args, context, info){
     const groups = await context.prisma.groups({
         where: { name_contains: args.filter },
         skip: args.skip,
-        first: args.first
+        first: args.first,
+        orderBy: args.orderBy
     });
     return groups;
 }
