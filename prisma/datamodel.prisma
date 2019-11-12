@@ -33,5 +33,5 @@ type Group {
     createdBy: User! @relation(name: "CreatedGroups")
     members: [User!] @relation(name: "MemberOfGroups")
     isPrivate: Boolean!
-    foods: [Food!]
+    foods: [Food!] @relation(onDelete: CASCADE)
 }

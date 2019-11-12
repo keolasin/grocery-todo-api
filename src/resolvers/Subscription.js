@@ -20,7 +20,19 @@ const newVote = {
     }
 }
 
+function newGroupSubscribe(parent, args, context, info){
+    return context.prisma$subscribe.group({ mutation_in: ['CREATED'] }).node();
+}
+
+const newGroup = {
+    subscribe: newGroupSubscribe,
+    resolve: payload => {
+        return payload;
+    }
+}
+
 module.exports = {
     newFood,
-    newVote
+    newVote,
+    newGroup
 };
